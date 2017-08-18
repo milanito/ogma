@@ -1,5 +1,5 @@
 import {
-  reduce, get, merge, clone, join, map, isEmpty
+  reduce, join, isEmpty
 } from 'lodash';
 
 import flatjson from './flatjson';

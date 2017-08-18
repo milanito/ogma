@@ -1,5 +1,5 @@
 import {
-  notFound, badImplementation, notSupported
+  notFound, badImplementation
 } from 'boom';
 import {
   merge, get, isNull, findIndex, isEqual, nth, identity

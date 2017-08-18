@@ -3,7 +3,7 @@ import {
 } from 'boom';
 import {
   get, omit, clone,
-  merge, isNull, isEqual, map
+  merge, isNull, map
 } from 'lodash';
 
 import User from '../database/models/user.model';

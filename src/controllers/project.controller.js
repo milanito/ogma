@@ -4,7 +4,7 @@ import {
 } from 'boom';
 import {
   get, omit, clone, merge, map, set, union,
-  indexOf, transform, keys, pick, findIndex,
+  indexOf, keys, pick, findIndex,
   isNull, isEqual, reduce, values, uniq, filter,
   size, nth, forEach
 } from 'lodash';
@@ -211,7 +211,7 @@ export const updateUser = (request, reply) =>
     if (isEqual(idx, -1)) {
       return reply(notFound(new Error('User is not in project')));
     }
-    set(project.users[idx], role, get(request, 'params.role', ''));
+    set(project.users[idx], 'role', get(request, 'params.role', ''));
     project.markModified('users');
 
     return project.save()

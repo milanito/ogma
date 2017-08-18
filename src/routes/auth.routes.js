@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import Joi from 'joi';
 import { forEach } from 'lodash';
 
@@ -10,6 +9,8 @@ import {
  * This function registers the server's routes
  * for user authentication
  * @param { Object } server the Hapi server
+ * @param { Object } options the plugin options
+ * @param { Function } next the Hapi next function
  * @return { Promise } a promise that resolves the
  * server
  */

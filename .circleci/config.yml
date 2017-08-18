@@ -129,10 +129,6 @@ workflows:
       - docs:
           requires:
             - install
-          filters:
-            branches:
-              only:
-                - production
       - test:
           requires:
             - install

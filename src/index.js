@@ -1,8 +1,16 @@
-
 import database from './database';
 import server from './server';
 import routes from './routes';
 
+/**
+ * This is the start function that will do
+ * the following :
+ * - Connect to the database
+ * - Configure the server
+ * - Configure the routes
+ * - Start the server
+ * @return { Void } Nothing
+ */
 const start = () =>
   database()
   .then(server)

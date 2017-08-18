@@ -7,11 +7,14 @@ import vision from 'vision';
 import inert from 'inert';
 import lout from 'lout';
 import { Server } from 'hapi';
-import { get, isNull } from 'lodash';
+import { get } from 'lodash';
 
-import User from '../database/models/user.model';
+import { validateUser } from '../helpers';
 import { api, log } from '../config';
 
+/**
+ * This is the list of the loaded plugins
+ */
 const PLUGINS = [{
   register: hapiBunyan,
   options: {
@@ -34,17 +37,11 @@ const PLUGINS = [{
   register: lout
 }];
 
-const validateUser = (decoded, request, callback) =>
-  User.findById(get(decoded, '_id', ''))
-  .exec()
-  .then((user) => {
-    if (isNull(user)) {
-      return callback(null, false);
-    }
-    return callback(null, true);
-  })
-  .catch(err => callback(err));
-
+/**
+ * This functions loads the server's plugins
+ * and registers the strategy for authentication
+ * @return { Promise } A promise that resolves
+ */
 export default () =>
   new Promise((resolve, reject) => {
     const server = new Server();

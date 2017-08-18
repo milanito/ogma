@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
-import Promise from 'bluebird';
 import {
   pick, set, get,
   isEmpty
@@ -36,9 +35,9 @@ userSchema.methods = {
   /**
    * This function is used to compare the user password with
    * a given password
-   * @method comparePassword
-   * @param { String } password
-   * @return Promise
+   * @param { String } password The password to check
+   * @return { Promise } A promise that resolves a boolean
+   * indicating if passwords match
    */
   comparePassword: function comparePassword(password) {
     const self = this;
