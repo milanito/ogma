@@ -33,6 +33,13 @@ userSchema.virtual('profile').get(function getProfile() {
 });
 
 userSchema.methods = {
+  /**
+   * This function is used to compare the user password with
+   * a given password
+   * @method comparePassword
+   * @param { String } password
+   * @return Promise
+   */
   comparePassword: function comparePassword(password) {
     const self = this;
     return bcrypt.compare(password, get(self, 'hash', ''));

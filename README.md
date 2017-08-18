@@ -1,6 +1,6 @@
 # Ogma
 
-Ogma is 
+Ogma is an API for translation
 
 ## Usage
 

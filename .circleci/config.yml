@@ -1,0 +1,159 @@
+jobs:
+  install:
+    docker:
+      - image: circleci/node:6.10.3
+        user: root
+    steps:
+      - checkout
+      - restore_cache:
+          key: yarn-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install build essential
+          command: apt-get install build-essential
+      - run:
+          name: Use NPM Registry
+          command: echo "registry=https://registry.npmjs.org/" > ~/.npmrc
+      - run:
+          name: Install dependencies
+          command: yarn install --pure-lockfile
+      - run:
+          name: Install bcrypt
+          command: npm install bcrypt
+      - save_cache:
+          key: yarn-{{ checksum "yarn.lock" }}
+          paths:
+            - "~/.npm"
+            - "node_modules"
+
+  docs:
+    docker:
+      - image: circleci/node:6.10.3
+        user: root
+    steps:
+      - checkout
+      - restore_cache:
+          key: yarn-{{ checksum "yarn.lock" }}
+      - run:
+          name: Generate documentation
+          command: yarn doc
+      - store_artifacts:
+          path: docs
+          destination: documentation
+      - save_cache:
+          key: docs-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - docs
+
+  test:
+    docker:
+      - image: circleci/node:6.10.3
+        user: root
+      - image: mongo:3.4.6
+      - image: rabbitmq:3.6-management-alpine
+    steps:
+      - checkout
+      - restore_cache:
+          key: yarn-{{ checksum "yarn.lock" }}
+      - run:
+          name: Run Lint
+          command: yarn lint
+      - run:
+          name: Run tests
+          command: yarn test
+      - store_artifacts:
+          path: coverage
+          destination: coverage
+      - save_cache:
+          key: coverage-{{ checksum "coverage/lcov.info" }}
+          paths: coverage
+
+  codacity:
+    docker:
+      - image: circleci/node:6.10.3
+        user: root
+    steps:
+      - checkout
+      - restore_cache:
+          key: yarn-{{ checksum "yarn.lock" }}
+      - restore_cache:
+          key: coverage
+      - run:
+          name: Install coverage
+          command: npm install -g codacy-coverage
+      - run:
+          name: Update coverage
+          command: cat ./coverage/lcov.info | codacy-coverage
+
+  build:
+    docker:
+      - image: circleci/node:6.10.3
+        user: root
+    steps:
+      - checkout
+      - restore_cache:
+          key: yarn-{{ checksum "yarn.lock" }}
+      - run:
+          name: Run build
+          command: yarn build
+      - save_cache:
+          key: build-{{ .Branch }}-{{ .Revision }}
+          paths: dist
+
+  deploy_docker:
+    docker:
+      - image: circleci/node:6.10.3
+        user: root
+    steps:
+      - checkout
+      - setup_remote_docker
+      - restore_cache:
+          key: yarn-{{ checksum "yarn.lock" }}
+      - restore_cache:
+          key: build
+      - run:
+          name: Build docker image
+          command: yarn docker-build
+          timeout: 1500
+      - run:
+          name: Login to Docker hub
+          command: docker login -u $DOCKER_USER -p $DOCKER_PASS --email $DOCKER_EMAIL
+      - run:
+          name: Push docker image
+          command: yarn docker-push
+
+workflows:
+  version: 2
+  full_workflow:
+    jobs:
+      - install
+      - docs:
+          requires:
+            - install
+          filters:
+            branches:
+              only:
+                - production
+      - test:
+          requires:
+            - install
+      - codacy:
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - master
+      - build:
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - master
+      - deploy_docker:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - production
