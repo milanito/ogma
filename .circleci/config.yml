@@ -110,6 +110,15 @@ jobs:
       - run:
           name: Install AWS CLI
           command: pip install awscli --upgrade --user
+      - run:
+          name: Update path
+          command: echo "export PATH=~/.local/bin:$PATH" >> ~/.bash_profile
+      - run:
+          name: Make script executable
+          command: chmod +x ~/.local/bin
+      - run:
+          name: Source profile
+          command: source ~/.bash_profile
       - deploy:
           name: Sync documentation
           command: aws s3 sync docs s3://$BUCKET_NAME/docs/ --region eu-west-1 --delete
