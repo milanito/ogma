@@ -9,7 +9,7 @@ jobs:
           key: yarn-{{ checksum "yarn.lock" }}
       - run:
           name: Install build essential
-          command: apt-get install build-essential
+          command: apt-get install -y build-essential
       - run:
           name: Use NPM Registry
           command: echo "registry=https://registry.npmjs.org/" > ~/.npmrc
@@ -109,16 +109,7 @@ jobs:
           key: docs-{{ .Branch }}-{{ .Revision }}
       - run:
           name: Install AWS CLI
-          command: pip install awscli --upgrade --user
-      - run:
-          name: Update path
-          command: echo "export PATH=~/.local/bin:$PATH" >> ~/.bash_profile
-      - run:
-          name: Make script executable
-          command: chmod +x ~/.local/bin
-      - run:
-          name: Source profile
-          command: source ~/.bash_profile
+          command: apt-get update && apt-get install -y awscli
       - deploy:
           name: Sync documentation
           command: aws s3 sync docs s3://$BUCKET_NAME/docs/ --region eu-west-1 --delete
