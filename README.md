@@ -1,6 +1,6 @@
 # Ogma
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/a124c4eeb36c43da9f10bcd867ada423)](https://www.codacy.com/app/rondeau.matthieu.r/ogma?utm_source=github.com&utm_medium=referral&utm_content=milanito/ogma&utm_campaign=Badge_Coverage) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a124c4eeb36c43da9f10bcd867ada423)](https://www.codacy.com/app/rondeau.matthieu.r/ogma?utm_source=github.com&utm_medium=referral&utm_content=milanito/ogma&utm_campaign=badger) [![CircleCI](https://circleci.com/gh/milanito/ogma.svg?style=svg)](https://circleci.com/gh/milanito/ogma)
+[![Documentation Badge](https://s3-eu-west-1.amazonaws.com/ogma-api/docs/badge.svg)](https://s3-eu-west-1.amazonaws.com/ogma-api/docs/index.html) [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/a124c4eeb36c43da9f10bcd867ada423)](https://www.codacy.com/app/rondeau.matthieu.r/ogma?utm_source=github.com&utm_medium=referral&utm_content=milanito/ogma&utm_campaign=Badge_Coverage) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a124c4eeb36c43da9f10bcd867ada423)](https://www.codacy.com/app/rondeau.matthieu.r/ogma?utm_source=github.com&utm_medium=referral&utm_content=milanito/ogma&utm_campaign=badger) [![CircleCI](https://circleci.com/gh/milanito/ogma.svg?style=svg)](https://circleci.com/gh/milanito/ogma)
 
 Ogma is an API for translation
 
