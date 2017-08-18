@@ -101,12 +101,15 @@ jobs:
 
   deploy_docs:
     docker:
-      - image: circleci/node:6.10.3
+      - image: circleci/python:2.7
         user: root
     steps:
       - checkout
       - restore_cache:
           key: docs-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Install AWS CLI
+          command: pip install awscli --upgrade --user
       - deploy:
           name: Sync documentation
           command: aws s3 sync docs s3://$BUCKET_NAME/docs/ --region eu-west-1 --delete
