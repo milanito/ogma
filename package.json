@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "author": "Matthieu Rondeau <mr@umanlife.com>",
   "license": "MIT",
+  "homepage": "https://github.com/milanito/ogma",
   "config": {
     "dockerimage": "mrumanlife/ogma"
   },
@@ -13,7 +14,7 @@
     "start": "node dist",
     "watch": "gulp watch",
     "test": "node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=test DB_HOST=mongodb://localhost/translation-test nyc --reporter=text mocha --compilers js:babel-register",
-    "docker-build": "gulp build; docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $npm_package_config_dockerimage .",
+    "docker-build": "gulp build; docker build -t $npm_package_config_dockerimage .",
     "create-admin": "node_modules/babel-cli/bin/babel-node.js -- scripts/create-admin.script.js"
   },
   "dependencies": {
