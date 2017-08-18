@@ -99,6 +99,18 @@ jobs:
           key: build-{{ .Branch }}-{{ .Revision }}
           paths: dist
 
+  deploy_docs:
+    docker:
+      - image: circleci/node:6.10.3
+        user: root
+    steps:
+      - checkout
+      - restore_cache:
+          key: docs-{{ .Branch }}-{{ .Revision }}
+      - run:
+        name: Sync documentation
+        command: aws s3 sync docs s3://$BUCKET_NAME --region eu-west-1
+
   deploy_docker:
     docker:
       - image: circleci/node:6.10.3
@@ -142,6 +154,13 @@ workflows:
       - build:
           requires:
             - test
+          filters:
+            branches:
+              only:
+                - master
+      - deploy_docs:
+          requires:
+            - docs
           filters:
             branches:
               only:
