@@ -1,5 +1,7 @@
 # Ogma
 
+[![CircleCI](https://circleci.com/gh/milanito/ogma.svg?style=svg)](https://circleci.com/gh/milanito/ogma)
+
 Ogma is an API for translation
 
 ## Usage

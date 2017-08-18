@@ -67,7 +67,7 @@ jobs:
           key: coverage-{{ checksum "coverage/lcov.info" }}
           paths: coverage
 
-  codacity:
+  codacy:
     docker:
       - image: circleci/node:6.10.3
         user: root
