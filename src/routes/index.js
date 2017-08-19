@@ -2,6 +2,7 @@ import Promise from 'bluebird';
 import { map } from 'lodash';
 
 import userRoutes from './user.routes';
+import clientRoutes from './client.routes';
 import projectRoutes from './project.routes';
 import authRoutes from './auth.routes';
 import exportRoutes from './export.routes';
@@ -14,6 +15,9 @@ import miscRoutes from './misc.routes';
 const ROUTERS = [{
     register: userRoutes,
     prefix: '/api/users'
+  }, {
+    register: clientRoutes,
+    prefix: '/api/clients'
   }, {
     register: projectRoutes,
     prefix: '/api/projects'

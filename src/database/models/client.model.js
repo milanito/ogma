@@ -2,15 +2,26 @@ import mongoose from 'mongoose';
 import crypto from 'crypto';
 import Promise from 'bluebird';
 import {
-  set, get, isEqual
+  set, get, isEqual, isNull
 } from 'lodash';
 
 /**
  * The client schema consists of :
+ * - A name
  * - A token
+ * - An owner
  * - A projects list
  */
 const clientSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   token: {
     type: String,
   },
@@ -41,16 +52,27 @@ clientSchema.methods = {
 
 clientSchema.pre('save', function preSave(next) {
   const self = this;
-  if (isEqual(get(self, 'isNew', false), true)) {
-    return crypto.randomBytes(48, (err, buffer) => {
-      if (err) {
-        return next(err);
-      }
-      set(self, 'token', buffer.toString('hex'));
-      return next();
-    });
-  }
-  return next();
+  return self.constructor
+  .findOne({ name: self.name })
+  .exec()
+  .then(client => {
+    if (client &&
+      (isEqual(get(self, 'isNew', false), true) ||
+        !isEqual(get(client, '_id', ''), get(self, '_id', '')))) {
+      return next(new Error('Client name already registered'));
+    }
+    if (!isNull(get(self, 'token', null))) {
+      return crypto.randomBytes(48, (err, buffer) => {
+        if (err) {
+          return next(err);
+        }
+        set(self, 'token', buffer.toString('hex'));
+        return next();
+      });
+    }
+    return next();
+  })
+  .catch(err => next(err));
 });
 
 export default mongoose.model('Client', clientSchema);

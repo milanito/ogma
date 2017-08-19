@@ -75,7 +75,7 @@ export const updateUser = (request, reply) =>
   .catch(err => reply(badImplementation(err)));
 
 /**
- * This function update a given user
+ * This function deletes a given user
  * @param { Object } request the Hapi request object
  * @param { Function } reply the Hapi reply object
  * @return { Promise } a promise that resolves

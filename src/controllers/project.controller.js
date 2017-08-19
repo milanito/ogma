@@ -4,10 +4,11 @@ import {
 } from 'boom';
 import {
   get, clone, merge, map, set,
-  isNull,
+  isNull, remove, isEqual
 } from 'lodash';
 
 import Project from '../database/models/project.model';
+import Client from '../database/models/client.model';
 import { projectsListQuery } from '../helpers';
 
 /**
@@ -104,7 +105,18 @@ export const deleteProject = (request, reply) =>
     if (isNull(project)) {
       return reply(notFound(new Error('Project not found')));
     }
-    return Project.remove({ _id: get(request, 'params.id', '') }).exec();
+    return Project
+      .remove({ _id: get(request, 'params.id', '') }).exec()
+      .then(() =>
+        Client.find({ projects: get(request, 'params.id', '') })
+        .exec())
+      .then(clients =>
+        Promise.all(map(clients, client => {
+          set(client, 'projects', remove(get(client, 'projects', []),
+            project => isEqual(project(get(request, 'params.id', '')))));
+          client.markModified('projects');
+          return client.save();
+        })))
+      .then(() => reply('Deleted').code(ACCEPTED));
   })
-  .then(() => reply('Deleted').code(ACCEPTED))
   .catch(err => reply(badImplementation(err)));

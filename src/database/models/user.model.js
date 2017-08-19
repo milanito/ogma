@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import {
   pick, set, get,
-  isEmpty
+  isEmpty, isEqual
 } from 'lodash';
 
 /**
@@ -60,23 +60,24 @@ userSchema.pre('save', function preSave(next) {
   .findOne({ email: self.email })
   .exec()
   .then((user) => {
-    if (self.isNew && user) {
+    if (user &&
+      (isEqual(get(self, 'isNew', false), true) ||
+        !isEqual(get(user, '_id', ''), get(self, '_id', '')))) {
       return next(new Error('Email already registered'));
     }
-    if (isEmpty(get(self, 'password', ''))) {
-      return next();
+    if (!isEmpty(get(self, 'password', ''))) {
+      return bcrypt.hash(self.password, 10, (err, hash) => {
+        if (err) {
+          return next(err);
+        }
+        set(self, 'hash', hash);
+        set(self, 'password', null);
+        return next();
+      });
     }
-    return true;
+    return next();
   })
-  .then(() =>
-    bcrypt.hash(self.password, 10, (err, hash) => {
-      if (err) {
-        return next(err);
-      }
-      set(self, 'hash', hash);
-      set(self, 'password', null);
-      return next();
-    }));
+  .catch(err => next(err));
 });
 
 export default mongoose.model('User', userSchema);

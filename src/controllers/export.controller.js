@@ -1,14 +1,16 @@
+import Promise from 'bluebird';
 import {
   notFound, badImplementation
 } from 'boom';
 import {
-  merge, get, isNull, findIndex, isEqual, nth, identity
+  merge, get, isNull, findIndex, isEqual, nth, identity,
+  reduce, isEmpty, map, uniq, union
 } from 'lodash';
 
 import Project from '../database/models/project.model';
 import EXPORTERS from '../exporter';
 
-import { projectsListQuery } from '../helpers';
+import { projectsListQueryWithClient, projectsListQuery } from '../helpers';
 
 /**
  * This function is a wrapper that selects the right
@@ -30,7 +32,7 @@ const _exportLocale = ({ code, keys }, type, pKeys) =>
  * @param { Function } reply the Hapi reply object
  * @return { Promise } a promise that resolves
  */
-export const exporter = (request, reply) =>
+export const exporterProject = (request, reply) =>
   Project
   .findOne(merge({
     _id: get(request, 'params.id', '')
@@ -49,6 +51,86 @@ export const exporter = (request, reply) =>
 
     return reply(_exportLocale(nth(get(project, 'locales', []), idx),
       get(request, 'params.type', ''), get(project, 'keys', [])));
+  })
+  .catch(err => reply(badImplementation(err)));
+
+/**
+ * This function exports some projects' locale, using the
+ * provided type and locale code
+ * @param { Object } request the Hapi request object
+ * @param { Function } reply the Hapi reply object
+ * @return { Promise } a promise that resolves
+ */
+export const exporterProjects = (request, reply) =>
+  Promise.all(map(get(request, 'payload.projects', []), _id =>
+    Project
+    .findOne(projectsListQueryWithClient(get(request,
+      'auth.credentials', {}), _id))
+    .exec()))
+  .then((projects) => {
+    if (isEmpty(projects)) {
+      return reply(notFound(new Error('Projects not found')));
+    }
+    const ind = findIndex(projects, project => isNull(project));
+    if (!isEqual(ind, -1)) {
+      return reply(notFound(new Error(`Project #${nth(get(request, 'payload.projects', []), ind)} does not exists`)));
+    }
+
+    const idxs = map(projects, (project) =>
+      findIndex(get(project, 'locales', []), locale =>
+        isEqual(get(locale, 'code', ''), get(request, 'params.locale', ''))));
+
+    if (!isEqual(findIndex(idxs, idx => isEqual(idx, -1)), -1)) {
+      return reply(notFound(new Error('Locale is not in project')));
+    }
+
+    return reply(_exportLocale(reduce(projects,
+      (total, project, idx) => merge(total, {
+        keys: get(nth(get(project, 'locales', []), nth(idxs, idx)), 'keys', {})
+      }), {
+        code: get(request, 'params.locale', '')
+      }), get(request, 'params.type', ''),
+      reduce(projects,
+        (total, project) => uniq(union(total, get(project, 'keys', []))), [])));
+  })
+  .catch(err => reply(badImplementation(err)));
+
+
+/**
+ * This function exports some projects' locale, using the
+ * provided type and locale code
+ * @param { Object } request the Hapi request object
+ * @param { Function } reply the Hapi reply object
+ * @return { Promise } a promise that resolves
+ */
+export const exporterClientProjects = (request, reply) =>
+  Promise.all(map(get(request, 'auth.credentials.projects', []), id =>
+    Project.findById(id).exec()))
+  .then((projects) => {
+    if (isEmpty(projects)) {
+      return reply(notFound(new Error('Projects not found')));
+    }
+    const ind = findIndex(projects, project => isNull(project));
+    if (!isEqual(ind, -1)) {
+      return reply(notFound(new Error(`Project #${nth(get(request, 'payload.projects', []), ind)} does not exists`)));
+    }
+
+    const idxs = map(projects, (project) =>
+      findIndex(get(project, 'locales', []), locale =>
+        isEqual(get(locale, 'code', ''), get(request, 'params.locale', ''))));
+
+    if (!isEqual(findIndex(idxs, idx => isEqual(idx, -1)), -1)) {
+      return reply(notFound(new Error('Locale is not in project')));
+    }
+
+    return reply(_exportLocale(reduce(projects,
+      (total, project, idx) => merge(total, {
+        keys: get(nth(get(project, 'locales', []), nth(idxs, idx)), 'keys', {})
+      }), {
+        code: get(request, 'params.locale', '')
+      }), get(request, 'params.type', ''),
+      reduce(projects,
+        (total, project) => uniq(union(total, get(project, 'keys', []))), [])));
   })
   .catch(err => reply(badImplementation(err)));
 

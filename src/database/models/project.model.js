@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { pick } from 'lodash';
+import { pick, isEqual, get } from 'lodash';
 
 /**
  * The project schema consists of :
@@ -44,11 +44,14 @@ projectSchema.pre('save', function preSave(next) {
   .findOne({ name: self.name })
   .exec()
   .then(project => {
-    if (self.isNew && project) {
+    if (project &&
+      (isEqual(get(self, 'isNew', false), true) ||
+        !isEqual(get(project, '_id', ''), get(self, '_id', '')))) {
       return next(new Error('Project name already registered'));
     }
     return next();
-  });
+  })
+  .catch(err => next(err));
 });
 
 projectSchema.virtual('small').get(function getProfile() {

@@ -8,6 +8,23 @@ import User from '../database/models/user.model';
  * This function is used to create a query for a given
  * user to retrieve projects
  * @param { Object } user the user that want to retrieve projects
+ * @param { String } _id the project id
+ * @return { Object } the query object
+ */
+export const projectsListQueryWithClient = (user, _id) => {
+  const query = { _id };
+  if (isEqual(get(user, 'role', ''), 'user')) {
+    merge(query, { 'users.user': get(user, '_id', '') });
+    merge(query, { 'users.role': { $in: ['editor', 'owner'] } });
+  }
+
+  return query;
+};
+
+/**
+ * This function is used to create a query for a given
+ * user to retrieve projects
+ * @param { Object } user the user that want to retrieve projects
  * @param { String } user._id the user's id in database
  * @param { String } user.role the user's role in database
  * @param { Boolean } isEditor if the user is a project owner or editor
@@ -24,6 +41,23 @@ export const projectsListQuery = ({ _id, role }, isEditor = false) => {
   }
 
   return query;
+};
+
+/**
+ * This function is used to create a query for a given
+ * user to retrieve clients
+ * @param { Object } user the user that want to retrieve clients
+ * @param { String } _id the project id
+ * @return { Object } the query object
+ */
+export const clientsListQuery = (user, _id = null) => {
+  if (isEqual(get(user, 'role', 'user'), 'user')) {
+    return { owner: get(user, '_id', '') };
+  }
+  if (!isNull(_id)) {
+    return { _id };
+  }
+  return {};
 };
 
 /**

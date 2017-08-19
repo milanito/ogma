@@ -68,7 +68,7 @@ const _authenticateClient = (request, reply) =>
         return reply(forbidden(new Error('token is wrong')));
       }
       return reply({
-        token: jwt.sign(merge(pick(client, ['_id']), { role: 'client' }))
+        token: jwt.sign(merge(pick(client, ['_id', 'projects']), { role: 'client' }))
       });
     }))
   .catch(err => badImplementation(err));
