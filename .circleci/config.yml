@@ -113,29 +113,6 @@ jobs:
       - deploy:
           name: Sync documentation
           command: aws s3 sync docs s3://ogma-api/docs/ --region eu-west-1 --delete
-
-  deploy_docker:
-    docker:
-      - image: circleci/node:6.10.3
-        user: root
-    steps:
-      - checkout
-      - setup_remote_docker
-      - restore_cache:
-          key: yarn-{{ checksum "yarn.lock" }}
-      - restore_cache:
-          key: build
-      - run:
-          name: Build docker image
-          command: yarn docker-build
-          timeout: 1500
-      - run:
-          name: Login to Docker hub
-          command: docker login -u $DOCKER_USER -p $DOCKER_PASS --email $DOCKER_EMAIL
-      - deploy:
-          name: Push docker image
-          command: yarn docker-push
-
 workflows:
   version: 2
   full_workflow:
@@ -154,13 +131,6 @@ workflows:
             branches:
               only:
                 - master
-      - build:
-          requires:
-            - test
-          filters:
-            branches:
-              only:
-                - master
       - deploy_docs:
           requires:
             - docs
@@ -168,10 +138,3 @@ workflows:
             branches:
               only:
                 - master
-      - deploy_docker:
-          requires:
-            - build
-          filters:
-            branches:
-              only:
-                - production

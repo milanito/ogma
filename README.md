@@ -16,9 +16,17 @@ $ cd ogma
 $ yarn
 ```
 
-### Docker
+### Docker Image
 
-The easiest way to use Ogma is to use it with docker, first you need to build the image, there is a script for that :
+You can test the API using the docker image, the easiest way to do so is to use the provided docker file :
+
+```bash
+$ docker-compose -f docker-compose/config-hub.yaml up
+```
+
+### Docker Locally
+
+The easiest way to use Ogma locally is to use it with docker, first you need to build the image, there is a script for that :
 
 ```bash
 $ yarn docker-build
@@ -39,12 +47,11 @@ $ docker run mrumanlife/ogma
 Or you can also use the provided docker compose file in the `docker-compose` folder, by doing :
 
 ```bash
-$ yarn build
-$ docker-compose -f docker-compose/config.yaml build
-$ docker-compose -f docker-compose/config.yaml up
+$ docker-compose -f docker-compose/config-local.yaml build
+$ docker-compose -f docker-compose/config-local.yaml up
 ```
 
-> Only the third step is necessary if you run the `yarn docker-build` command
+> Only the second step is necessary if you run the `yarn docker-build` command
 
 ### Running locally
 
