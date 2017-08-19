@@ -1,9 +1,12 @@
 import {
-  conflict, notFound, badImplementation
+  ACCEPTED
+} from 'http-status';
+import {
+  conflict, notFound, badImplementation, forbidden
 } from 'boom';
 import {
   get, omit, clone,
-  merge, isNull, map
+  merge, isNull, map, isEqual
 } from 'lodash';
 
 import User from '../database/models/user.model';
@@ -14,7 +17,7 @@ import User from '../database/models/user.model';
  * @param { Function } reply the Hapi reply object
  * @return { Promise } a promise that resolves
  */
-export const list = (request, reply) =>
+export const listUsers = (request, reply) =>
   User.find()
   .exec()
   .then(users => reply(map(users, user => user.profile)))
@@ -26,7 +29,7 @@ export const list = (request, reply) =>
  * @param { Function } reply the Hapi reply object
  * @return { Promise } a promise that resolves
  */
-export const register = (request, reply) =>
+export const createUser = (request, reply) =>
   User
   .create(get(request, 'payload', {}))
   .then(user => reply(user.profile).code(201))
@@ -38,7 +41,7 @@ export const register = (request, reply) =>
  * @param { Function } reply the Hapi reply object
  * @return { Promise } a promise that resolves
  */
-export const detail = (request, reply) =>
+export const detailUser = (request, reply) =>
   User
   .findById(get(request, 'params.id', ''))
   .exec()
@@ -56,7 +59,7 @@ export const detail = (request, reply) =>
  * @param { Function } reply the Hapi reply object
  * @return { Promise } a promise that resolves
  */
-export const update = (request, reply) =>
+export const updateUser = (request, reply) =>
   User
   .findById(get(request, 'params.id', ''))
   .exec()
@@ -66,7 +69,32 @@ export const update = (request, reply) =>
     }
     return merge(clone(user),
       omit(get(request, 'payload', {}), ['_id', 'hash', 'password']))
-    .save();
+      .save()
+      .then(user => reply(user.profile));
   })
-  .then(user => reply(user.profile))
+  .catch(err => reply(badImplementation(err)));
+
+/**
+ * This function update a given user
+ * @param { Object } request the Hapi request object
+ * @param { Function } reply the Hapi reply object
+ * @return { Promise } a promise that resolves
+ */
+export const deleteUser = (request, reply) =>
+  User
+  .findById(get(request, 'params.id', ''))
+  .exec()
+  .then((user) => {
+    if (isNull(user)) {
+      return reply(notFound(new Error('User not found')));
+    }
+
+    if (isEqual(get(user, '_id', '').toString(),
+      get(request, 'auth.credentials._id', ''))) {
+      return reply(forbidden(new Error('Cannot delete oneself')));
+    }
+    return User
+      .remove({ _id: get(request, 'params.id', '') }).exec()
+      .then(() => reply('deleted').code(ACCEPTED));
+  })
   .catch(err => reply(badImplementation(err)));

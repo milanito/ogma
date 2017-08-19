@@ -2,7 +2,7 @@ import Joi from 'joi';
 import { forEach } from 'lodash';
 
 import {
-  register, list, detail, update
+  createUser, listUsers, detailUser, updateUser, deleteUser
 } from '../controllers/user.controller';
 
 /**
@@ -18,7 +18,7 @@ const userRoutes = (server, options, next) => {
   forEach([{
     method: 'GET',
     path: '/',
-    handler: list,
+    handler: listUsers,
     config: {
       auth: 'jwt',
       plugins: {
@@ -32,7 +32,7 @@ const userRoutes = (server, options, next) => {
   }, {
     method: 'POST',
     path: '/',
-    handler: register,
+    handler: createUser,
     config: {
       auth: 'jwt',
       validate: {
@@ -54,7 +54,7 @@ const userRoutes = (server, options, next) => {
   }, {
     method: 'GET',
     path: '/{id}',
-    handler: detail,
+    handler: detailUser,
     config: {
       auth: 'jwt',
       validate: {
@@ -90,7 +90,7 @@ const userRoutes = (server, options, next) => {
   }, {
     method: 'PATCH',
     path: '/{id}',
-    handler: update,
+    handler: updateUser,
     config: {
       auth: 'jwt',
       validate: {
@@ -119,6 +119,31 @@ const userRoutes = (server, options, next) => {
             }, {
               effect: 'deny'
             }]
+          }]
+        }
+      }
+    },
+  }, {
+    method: 'DELETE',
+    path: '/{id}',
+    handler: deleteUser,
+    config: {
+      auth: 'jwt',
+      validate: {
+        params: {
+          id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i)
+        }
+      },
+      plugins: {
+        rbac: {
+          target: [{
+            'credentials:role': 'admin'
+          }],
+          apply: 'permit-overrides',
+          policies: [{
+            target: { 'credentials:role': 'admin' },
+            apply: 'deny-overrides',
+            rules: [{ effect: 'permit' }]
           }]
         }
       }

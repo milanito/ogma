@@ -2,11 +2,17 @@ import Joi from 'joi';
 import { forEach } from 'lodash';
 
 import {
-  create, list, detail, deleteProject,
-  getKeys, addKeys, updateKeys, deleteKeys,
-  getUsers, addUser, updateUser, deleteUser,
-  getLocales, addLocale, updateLocale, deleteLocale,
+  createProject, listProjects, detailProject, updateProject, deleteProject,
 } from '../controllers/project.controller';
+import {
+  getLocales, addLocale, updateLocale, deleteLocale,
+} from '../controllers/locale.controller';
+import {
+  getUsers, addUser, updateUser, deleteUser,
+} from '../controllers/projectUser.controller';
+import {
+  getKeys, addKeys, updateKeys, deleteKeys,
+} from '../controllers/key.controller';
 
 /**
  * This function registers the server's routes
@@ -21,7 +27,7 @@ const projectRoutes = (server, options, next) => {
   forEach([{
     method: 'GET',
     path: '/',
-    handler: list,
+    handler: listProjects,
     config: {
       auth: 'jwt',
       plugins: {
@@ -39,7 +45,7 @@ const projectRoutes = (server, options, next) => {
   }, {
     method: 'POST',
     path: '/',
-    handler: create,
+    handler: createProject,
     config: {
       auth: 'jwt',
       validate: {
@@ -62,12 +68,38 @@ const projectRoutes = (server, options, next) => {
   }, {
     method: 'GET',
     path: '/{id}',
-    handler: detail,
+    handler: detailProject,
     config: {
       auth: 'jwt',
       validate: {
         params: {
           id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i)
+        }
+      },
+      plugins: {
+        rbac: {
+          target: [{
+            'credentials:role': 'admin'
+          }, {
+            'credentials:role': 'user',
+          }],
+          apply: 'deny-overrides',
+          rules: [{ effect: 'permit' }]
+        }
+      }
+    }
+  }, {
+    method: 'PATCH',
+    path: '/{id}',
+    handler: updateProject,
+    config: {
+      auth: 'jwt',
+      validate: {
+        params: {
+          id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i)
+        },
+        payload: {
+          name: Joi.string().required()
         }
       },
       plugins: {

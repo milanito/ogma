@@ -23,10 +23,18 @@ const authRoutes = (server, options, next) => {
       auth: false,
       description: 'This route is used to authenticate the user',
       validate: {
-        payload: {
-          email: Joi.string().email().required().description('User Email'),
-          password: Joi.string().required().description('User Password')
-        }
+        payload: Joi.alternatives([
+          Joi.object({
+            grant: Joi.string().only('user').required().description('Grant type user'),
+            email: Joi.string().email().required().description('User Email'),
+            password: Joi.string().required().description('User Password')
+          }),
+          Joi.object({
+            grant: Joi.string().only('client').required().description('Grant type user'),
+            id: Joi.string().email().required().description('Client id'),
+            token: Joi.string().required().description('Client token')
+          })
+        ])
       },
       response: {
         status: {
