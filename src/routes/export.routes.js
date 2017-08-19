@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import { getLocales } from 'country-language';
-import { keys } from 'lodash';
+import { keys, map, replace } from 'lodash';
 
 import exporters from '../exporter';
 import { exporter } from '../controllers/export.controller';
@@ -25,7 +25,7 @@ const exportRoutes = (server, options, next) => {
       validate: {
         params: {
           id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i),
-          locale: Joi.string().only(getLocales()),
+          locale: Joi.string().only(map(getLocales(), locale => replace(locale, /-/g, '_'))),
           type: Joi.string().only(keys(exporters))
         }
       },

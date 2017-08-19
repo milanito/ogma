@@ -12,7 +12,7 @@ import {
 import User from '../src/database/models/user.model';
 import { userTest, userCreate, HOST, createUsers } from './seed';
 
-describe.only('# User Tests', () => {
+describe('# User Tests', () => {
   let tokenUser;
   let tokenAdmin;
   let adminUser;
