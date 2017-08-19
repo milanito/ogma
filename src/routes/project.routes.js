@@ -232,15 +232,133 @@ const projectRoutes = (server, options, next) => {
   }, {
     method: 'POST',
     path: '/{id}/users',
-    handler: addUser
+    handler: addUser,
+    config: {
+      auth: 'jwt',
+      validate: {
+        params: {
+          id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i).description('The project ID')
+        },
+        payload: {
+          user: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i).description('The user ID'),
+          role: Joi.string().only(['editor', 'normal']).description('The user role in project')
+        }
+      },
+      plugins: {
+        rbac: {
+          target: [{
+            'credentials:role': 'admin'
+          }, {
+            'credentials:role': 'user',
+          }],
+          apply: 'deny-overrides',
+          rules: [{ effect: 'permit' }]
+        }
+      },
+      response: {
+        status: {
+          200: Joi.any(),
+          400: Joi.object().keys({
+            statusCode: Joi.number(),
+            error: Joi.string(),
+            message: Joi.string()
+          }),
+          409: Joi.object().keys({
+            statusCode: Joi.number(),
+            error: Joi.string(),
+            message: Joi.string()
+          }),
+          404: Joi.object().keys({
+            statusCode: Joi.number(),
+            error: Joi.string(),
+            message: Joi.string()
+          })
+        }
+      }
+    }
   }, {
     method: 'PATCH',
-    path: '/{id}/users/{userid}/{role}',
-    handler: updateUser
+    path: '/{id}/users',
+    handler: updateUser,
+    config: {
+      auth: 'jwt',
+      validate: {
+        params: {
+          id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i).description('The project ID')
+        },
+        payload: {
+          user: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i).description('The user ID'),
+          role: Joi.string().only(['editor', 'normal']).description('The new user role in project')
+        }
+      },
+      plugins: {
+        rbac: {
+          target: [{
+            'credentials:role': 'admin'
+          }, {
+            'credentials:role': 'user',
+          }],
+          apply: 'deny-overrides',
+          rules: [{ effect: 'permit' }]
+        }
+      },
+      response: {
+        status: {
+          200: Joi.any(),
+          400: Joi.object().keys({
+            statusCode: Joi.number(),
+            error: Joi.string(),
+            message: Joi.string()
+          }),
+          404: Joi.object().keys({
+            statusCode: Joi.number(),
+            error: Joi.string(),
+            message: Joi.string()
+          })
+        }
+      }
+    }
   }, {
     method: 'DELETE',
-    path: '/{id}/users/{userid}',
-    handler: deleteUser
+    path: '/{id}/users',
+    handler: deleteUser,
+    config: {
+      auth: 'jwt',
+      validate: {
+        params: {
+          id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i).description('The project ID')
+        },
+        payload: {
+          user: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i).description('The user ID'),
+        }
+      },
+      plugins: {
+        rbac: {
+          target: [{
+            'credentials:role': 'admin'
+          }, {
+            'credentials:role': 'user',
+          }],
+          apply: 'deny-overrides',
+          rules: [{ effect: 'permit' }]
+        }
+      },
+      response: {
+        status: {
+          202: Joi.any(),
+          400: Joi.object().keys({
+            statusCode: Joi.number(),
+            error: Joi.string(),
+            message: Joi.string()
+          }),
+          404: Joi.object().keys({
+            statusCode: Joi.number(),
+            error: Joi.string(),
+            message: Joi.string()
+          })
+        }
+      }
+    }
   }, {
     method: 'GET',
     path: '/{id}/locales',
@@ -251,11 +369,11 @@ const projectRoutes = (server, options, next) => {
     handler: addLocale
   }, {
     method: 'PATCH',
-    path: '/{id}/locales/{locale}',
+    path: '/{id}/locales',
     handler: updateLocale
   }, {
     method: 'DELETE',
-    path: '/{id}/locales/{locale}',
+    path: '/{id}/locales',
     handler: deleteLocale
   }], def => server.route(def));
 

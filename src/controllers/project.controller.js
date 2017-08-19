@@ -242,8 +242,8 @@ export const addUser = (request, reply) =>
     if (isNull(project)) {
       return reply(notFound(new Error('Project not found')));
     }
-    const idx = findIndex(project.users, usr =>
-      isEqual(get(usr, 'user', ''), get(request, 'payload.user', '')));
+    const idx = findIndex(get(project, 'users', []), usr =>
+      isEqual(get(usr, 'user', '').toString(), get(request, 'payload.user', '')));
 
     if (idx > -1) {
       return reply(conflict(new Error('User already in project')));
@@ -252,9 +252,8 @@ export const addUser = (request, reply) =>
     project.markModified('users');
 
     return project.save()
-    .then(project => reply(map(project.users, user =>
-      merge(pick(get(user, 'user', {}), ['_id', 'username', 'email']),
-        pick(user, ['role'])))));
+    .then(project => reply(map(get(project, 'users', []), user =>
+      pick(user, ['role', 'user']))));
   })
   .catch(err => reply(badImplementation(err)));
 
@@ -275,18 +274,17 @@ export const updateUser = (request, reply) =>
       return reply(notFound(new Error('Project not found')));
     }
     const idx = findIndex(get(project, 'users', []), usr =>
-      isEqual(get(usr, 'user', ''), get(request, 'params.userid', '')));
+      isEqual(get(usr, 'user', '').toString(), get(request, 'payload.user', '')));
 
     if (isEqual(idx, -1)) {
       return reply(notFound(new Error('User is not in project')));
     }
-    set(project.users[idx], 'role', get(request, 'params.role', ''));
+    set(project.users[idx], 'role', get(request, 'payload.role', ''));
     project.markModified('users');
 
     return project.save()
     .then(project => reply(map(project.users, user =>
-      merge(pick(get(user, 'user', {}), ['_id', 'username', 'email']),
-        pick(user, ['role'])))));
+      pick(user, ['role', 'user']))));
   })
   .catch(err => reply(badImplementation(err)));
 
@@ -307,7 +305,7 @@ export const deleteUser = (request, reply) =>
       return reply(notFound(new Error('Project not found')));
     }
     const idx = findIndex(project.users, usr =>
-      isEqual(get(usr, 'user', ''), get(request, 'payload.user', '')));
+      isEqual(get(usr, 'user', '').toString(), get(request, 'payload.user', '')));
 
     if (isEqual(idx, -1)) {
       return reply(notFound(new Error('User is not in project')));
@@ -318,8 +316,7 @@ export const deleteUser = (request, reply) =>
 
     return project.save()
     .then(project => reply(map(project.users, user =>
-      merge(pick(get(user, 'user', {}), ['_id', 'username', 'email']),
-        pick(user, ['role'])))).code(ACCEPTED));
+      pick(user, ['role', 'user']))).code(ACCEPTED));
   })
   .catch(err => reply(badImplementation(err)));
 

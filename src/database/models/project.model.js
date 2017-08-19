@@ -22,7 +22,7 @@ const projectSchema = new mongoose.Schema({
     role: {
       type: String,
       default: 'editor',
-      enum: ['editor', 'owner']
+      enum: ['editor', 'owner', 'normal']
     }
   }],
   locales: [{
