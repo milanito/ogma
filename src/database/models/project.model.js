@@ -1,6 +1,13 @@
 import mongoose from 'mongoose';
 import { pick } from 'lodash';
 
+/**
+ * The project schema consists of :
+ * - A name, unique, for the project
+ * - A users list, with a user id and a role
+ * - A locales list, with a code and a translated keys
+ *   list
+ */
 const projectSchema = new mongoose.Schema({
   name: {
     type: String,

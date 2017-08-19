@@ -8,18 +8,36 @@ import {
 
 import User from '../database/models/user.model';
 
+/**
+ * This function lists the users
+ * @param { Object } request the Hapi request object
+ * @param { Function } reply the Hapi reply object
+ * @return { Promise } a promise that resolves
+ */
 export const list = (request, reply) =>
   User.find()
   .exec()
   .then(users => reply(map(users, user => user.profile)))
   .catch(err => reply(badImplementation(err)));
 
+/**
+ * This function creates a new user
+ * @param { Object } request the Hapi request object
+ * @param { Function } reply the Hapi reply object
+ * @return { Promise } a promise that resolves
+ */
 export const register = (request, reply) =>
   User
   .create(get(request, 'payload', {}))
   .then(user => reply(user.profile).code(201))
   .catch(err => reply(conflict(err)));
 
+/**
+ * This function serves details about a user
+ * @param { Object } request the Hapi request object
+ * @param { Function } reply the Hapi reply object
+ * @return { Promise } a promise that resolves
+ */
 export const detail = (request, reply) =>
   User
   .findById(get(request, 'params.id', ''))
@@ -32,6 +50,12 @@ export const detail = (request, reply) =>
   })
   .catch(err => reply(badImplementation(err)));
 
+/**
+ * This function update a given user
+ * @param { Object } request the Hapi request object
+ * @param { Function } reply the Hapi reply object
+ * @return { Promise } a promise that resolves
+ */
 export const update = (request, reply) =>
   User
   .findById(get(request, 'params.id', ''))

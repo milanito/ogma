@@ -4,6 +4,8 @@
 
 Ogma is an API for translation
 
+**Warning** : This is a work in progress
+
 ## Usage
 
 First clone the project, then install the modules by entering the following commands :
@@ -32,7 +34,7 @@ Then you can launch the image directly :
 $ docker run mrumanlife/ogma
 ```
 
-> This means you should have a mongodb instance running somewhere and provided its URI with the [dedicated env variable](#Env variables)
+> This means you should have a mongodb instance running somewhere and provided its URI with the [dedicated env variable](#env-variables)
 
 Or you can also use the provided docker compose file in the `docker-compose` folder, by doing :
 
@@ -44,7 +46,7 @@ $ docker-compose -f docker-compose/config.yaml up
 
 > Only the third step is necessary if you run the `yarn docker-build` command
 
-### Develop
+### Running locally
 
 In order to have the API run locally, you need to have a running mongodb instance. After installing the dependencies, just run the following command :
 
@@ -54,10 +56,53 @@ $ yarn watch
 
 > You could also install bunyan : `yarn global add bunyan` and run `yarn watch | bunyan` to display the requests nicely
 
+If you want to simply start the API without reloading, use the `yarn start` command.
+
+## Manual
+
+The API has the following objects :
+
+- Users : Users use the API to create projects
+    - A user has : an email (unique, required), an username (required), a role (required, default to `user`) and a password (hashed in database)
+    - A user can be : An admin (with the role of `admin`), which can do everything or a user (with the role `user`) which can only update itself or create project
+- Projects : Translations project
+    - A project has a unique name, users list and locales list
+    - The user can have the following roles : `owner` => Is the first editor of the project, `editor` => project admin, `normal` => can add translation to the project
+- Clients : Translations client to use the API
+    - The clients are linked to a project and have an ID and an access token
+    - The clients can only export translations of the project they are bound to
+
+From the API, users and clients can :
+
+- Create, update and delete users, if admin
+- Update its info, if only user
+- Create, update and delete projects, if admin
+- Create, update and delete its projects, if user and editor
+- Update its projects' translations, if user and normal
+- Export projects translations if admin
+- Export its projects translations if user or client
+
+### Locales
+
+Locales should be in this format : `fr-FR`
+
 ## Documentation
 
-When running the API, the documentation is accessible at the `/docs` path
+When running the API, the documentation is accessible at the `/docs` path.
 
-# Env variables
+To generate technical documentation, please use the `yarn doc` command. The documentation will be available in the `/docs` folder at the root of the project.
 
-There are several variables 
+The technical documentation is also accessible [here](https://s3-eu-west-1.amazonaws.com/ogma-api/docs/index.html).
+
+## Env variables
+
+There are several variables you can use :
+
+- `DB_HOST` : the mongodb uri
+- `API_PORT` : the API Port. **Warning** : If you are to modify the port, please also update the `Dockerfile` to expose the right port
+- `API_HOST` : the API host, default to `0.0.0.0`
+- `API_SECRET` : the API secret
+- `LOG_LEVEL` : the log level, defaut to `debug`
+- `LOG_NAME` : the log name
+
+Each variable has a default value

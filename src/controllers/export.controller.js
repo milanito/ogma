@@ -10,9 +10,26 @@ import EXPORTERS from '../exporter';
 
 import { projectsListQuery } from '../helpers';
 
+/**
+ * This function is a wrapper that selects the right
+ * exporter or identity function if none is found
+ * @param { Object } locale the locale
+ * @param { String } locale.code the locale's code
+ * @param { Array } locale.keys the locale's keys
+ * @param { String } type the type of export
+ * @param { Array } pKeys the project's keys
+ * @return { Object | String } The exported data
+ */
 const _exportLocale = ({ code, keys }, type, pKeys) =>
   get(EXPORTERS, type, identity)(keys, pKeys, code);
 
+/**
+ * This function exports a project's locale, using the
+ * provided type and locale code
+ * @param { Object } request the Hapi request object
+ * @param { Function } reply the Hapi reply object
+ * @return { Promise } a promise that resolves
+ */
 export const exporter = (request, reply) =>
   Project
   .findOne(merge({

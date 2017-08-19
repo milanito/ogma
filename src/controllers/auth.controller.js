@@ -9,6 +9,14 @@ import {
 import User from '../database/models/user.model';
 import { api } from '../config';
 
+/**
+ * This function authenticates a user, replying
+ * not found if the user is not found or forbidden
+ * if the password is wrong
+ * @param { Object } request the Hapi request object
+ * @param { Function } reply the Hapi reply object
+ * @return { Promise } a promise that resolves
+ */
 export const authenticate = (request, reply) =>
   User.findOne({
     email: get(request, 'payload.email', '')

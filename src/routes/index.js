@@ -7,6 +7,10 @@ import authRoutes from './auth.routes';
 import exportRoutes from './export.routes';
 import miscRoutes from './misc.routes';
 
+/**
+ * The routers list, which list each routes plugin
+ * with its prefix
+ */
 const ROUTERS = [{
     register: userRoutes,
     prefix: '/api/users'

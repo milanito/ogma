@@ -1232,6 +1232,13 @@ core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.npmjs.org/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
 
+country-language@^0.1.7:
+  version "0.1.7"
+  resolved "https://registry.npmjs.org/country-language/-/country-language-0.1.7.tgz#7870f4ba125db9a6071f19737bd9ef9343ae35db"
+  dependencies:
+    underscore "~1.7.0"
+    underscore.deep "~0.5.1"
+
 cross-env@^5.0.5:
   version "5.0.5"
   resolved "https://registry.npmjs.org/cross-env/-/cross-env-5.0.5.tgz#4383d364d9660873dd185b398af3bfef5efffef3"
@@ -5005,6 +5012,14 @@ unc-path-regex@^0.1.0:
 undefsafe@0.0.3:
   version "0.0.3"
   resolved "https://registry.npmjs.org/undefsafe/-/undefsafe-0.0.3.tgz#ecca3a03e56b9af17385baac812ac83b994a962f"
+
+underscore.deep@~0.5.1:
+  version "0.5.1"
+  resolved "https://registry.npmjs.org/underscore.deep/-/underscore.deep-0.5.1.tgz#072671f48d68735c34223fcfef63e69e5276cc2b"
+
+underscore@~1.7.0:
+  version "1.7.0"
+  resolved "https://registry.npmjs.org/underscore/-/underscore-1.7.0.tgz#6bbaf0877500d36be34ecaa584e0db9fef035209"
 
 unique-stream@^1.0.0:
   version "1.0.0"

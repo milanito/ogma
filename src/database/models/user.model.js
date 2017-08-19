@@ -5,6 +5,15 @@ import {
   isEmpty
 } from 'lodash';
 
+/**
+ * The user schema consists of :
+ * - An email, unique, for the user
+ * - A username
+ * - A role
+ * - A password, that is null and only used for pre
+ *   save hook
+ * - A hashed password
+ */
 const userSchema = new mongoose.Schema({
   email: {
     type: String,

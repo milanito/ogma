@@ -25,6 +25,7 @@
     "boom": "^5.2.0",
     "brok": "^1.1.1",
     "bunyan": "^1.8.12",
+    "country-language": "^0.1.7",
     "hapi": "^16.5.2",
     "hapi-auth-jwt2": "^7.3.0",
     "hapi-bunyan": "^0.7.0",
