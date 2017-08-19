@@ -1,6 +1,6 @@
 # Ogma
 
-[![Documentation Badge](https://s3-eu-west-1.amazonaws.com/ogma-api/docs/badge.svg)](https://s3-eu-west-1.amazonaws.com/ogma-api/docs/index.html) [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/a124c4eeb36c43da9f10bcd867ada423)](https://www.codacy.com/app/rondeau.matthieu.r/ogma?utm_source=github.com&utm_medium=referral&utm_content=milanito/ogma&utm_campaign=Badge_Coverage) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a124c4eeb36c43da9f10bcd867ada423)](https://www.codacy.com/app/rondeau.matthieu.r/ogma?utm_source=github.com&utm_medium=referral&utm_content=milanito/ogma&utm_campaign=badger) [![CircleCI](https://circleci.com/gh/milanito/ogma.svg?style=svg)](https://circleci.com/gh/milanito/ogma)
+[![bitHound Code](https://www.bithound.io/github/milanito/ogma/badges/code.svg)](https://www.bithound.io/github/milanito/ogma) [![bitHound Overall Score](https://www.bithound.io/github/milanito/ogma/badges/score.svg)](https://www.bithound.io/github/milanito/ogma) [![bitHound Dependencies](https://www.bithound.io/github/milanito/ogma/badges/dependencies.svg)](https://www.bithound.io/github/milanito/ogma/master/dependencies/npm) [![Documentation Badge](https://s3-eu-west-1.amazonaws.com/ogma-api/docs/badge.svg)](https://s3-eu-west-1.amazonaws.com/ogma-api/docs/index.html) [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/a124c4eeb36c43da9f10bcd867ada423)](https://www.codacy.com/app/rondeau.matthieu.r/ogma?utm_source=github.com&utm_medium=referral&utm_content=milanito/ogma&utm_campaign=Badge_Coverage) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a124c4eeb36c43da9f10bcd867ada423)](https://www.codacy.com/app/rondeau.matthieu.r/ogma?utm_source=github.com&utm_medium=referral&utm_content=milanito/ogma&utm_campaign=badger) [![CircleCI](https://circleci.com/gh/milanito/ogma.svg?style=svg)](https://circleci.com/gh/milanito/ogma)
 
 Ogma is an API for translation
 
@@ -11,7 +11,7 @@ Ogma is an API for translation
 First clone the project, then install the modules by entering the following commands :
 
 ```bash
-$ git clone //github.com/milanito/ogma.git
+$ git clone git@github.com:milanito/ogma.git
 $ cd ogma
 $ yarn
 ```
@@ -84,7 +84,7 @@ From the API, users and clients can :
 
 ### Locales
 
-Locales should be in this format : `fr-FR`
+Locales should be in this format : `fr_FR`
 
 ## Documentation
 
