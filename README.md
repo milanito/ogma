@@ -18,11 +18,20 @@ $ yarn
 
 ### Docker Image
 
-You can test the API using the docker image, the easiest way to do so is to use the provided docker file :
+You can test the API using the [docker image](https://hub.docker.com/r/mrumanlife/ogma), the easiest way to do so is to use the provided docker file :
 
 ```bash
 $ docker-compose -f docker-compose/config-hub.yaml up
 ```
+
+Or you can pull the image and run it :
+
+```
+$ docker pull mrumanlife/ogma
+$ docker run -P mrumanlife/ogma
+```
+
+> Do not forget that the API needs a running instance of mongodb
 
 ### Docker Locally
 

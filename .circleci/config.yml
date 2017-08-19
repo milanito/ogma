@@ -44,6 +44,18 @@ jobs:
           paths:
             - docs
 
+  lint:
+    docker:
+      - image: circleci/node:6.10.3
+        user: root
+    steps:
+      - checkout
+      - restore_cache:
+          key: yarn-{{ checksum "yarn.lock" }}
+      - run:
+          name: Run Lint
+          command: yarn lint
+
   test:
     docker:
       - image: circleci/node:6.10.3
@@ -54,9 +66,6 @@ jobs:
       - checkout
       - restore_cache:
           key: yarn-{{ checksum "yarn.lock" }}
-      - run:
-          name: Run Lint
-          command: yarn lint
       - run:
           name: Run tests
           command: yarn test
@@ -84,21 +93,6 @@ jobs:
           name: Update coverage
           command: cat ./coverage/lcov.info | codacy-coverage
 
-  build:
-    docker:
-      - image: circleci/node:6.10.3
-        user: root
-    steps:
-      - checkout
-      - restore_cache:
-          key: yarn-{{ checksum "yarn.lock" }}
-      - run:
-          name: Run build
-          command: yarn build
-      - save_cache:
-          key: build-{{ .Branch }}-{{ .Revision }}
-          paths: dist
-
   deploy_docs:
     docker:
       - image: circleci/python:2.7
@@ -113,11 +107,15 @@ jobs:
       - deploy:
           name: Sync documentation
           command: aws s3 sync docs s3://ogma-api/docs/ --region eu-west-1 --delete
+
 workflows:
   version: 2
   full_workflow:
     jobs:
       - install
+      - lint:
+          requires:
+            - install
       - docs:
           requires:
             - install
