@@ -27,10 +27,7 @@ const _authenticateUser = (request, reply) =>
     if (isNull(user)) {
       return reply(notFound(new Error('User not found')));
     }
-    return user;
-  })
-  .then(user =>
-    user
+    return user
     .comparePassword(get(request, 'payload.password', ''))
     .then((res) => {
       if (!res) {
@@ -39,7 +36,8 @@ const _authenticateUser = (request, reply) =>
       return reply({
         token: jwt.sign(user.profile, get(api, 'secret', ''))
       });
-    }))
+    });
+  })
   .catch(err => badImplementation(err));
 
 /**
@@ -58,19 +56,18 @@ const _authenticateClient = (request, reply) =>
     if (isNull(client)) {
       return reply(notFound(new Error('Client not found')));
     }
-    return client;
-  })
-  .then(client =>
-    client
+    return client
     .compareToken(get(request, 'payload.token', ''))
     .then((res) => {
       if (!res) {
-        return reply(forbidden(new Error('token is wrong')));
+        return reply(forbidden(new Error('Token is wrong')));
       }
       return reply({
-        token: jwt.sign(merge(pick(client, ['_id', 'projects']), { role: 'client' }))
+        token: jwt.sign(merge(pick(client, ['_id']), { role: 'client' }),
+          get(api, 'secret', ''))
       });
-    }))
+    });
+  })
   .catch(err => badImplementation(err));
 
 /**

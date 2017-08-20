@@ -23,18 +23,29 @@ const authRoutes = (server, options, next) => {
       auth: false,
       description: 'This route is used to authenticate the user',
       validate: {
-        payload: Joi.alternatives([
-          Joi.object({
-            grant: Joi.string().only('user').required().description('Grant type user'),
-            email: Joi.string().email().required().description('User Email'),
-            password: Joi.string().required().description('User Password')
-          }),
-          Joi.object({
-            grant: Joi.string().only('client').required().description('Grant type user'),
-            id: Joi.string().email().required().description('Client id'),
-            token: Joi.string().required().description('Client token')
-          })
-        ])
+        payload: Joi.object({
+          grant: Joi.string().only(['user', 'client']).required().description('Grant type'),
+          email: Joi.string().when('grant', {
+            is: Joi.valid('user'),
+            then: Joi.string().email().required(),
+            otherwise: Joi.forbidden()
+          }).description('User Email'),
+          password: Joi.string().when('grant', {
+            is: Joi.valid('user'),
+            then: Joi.required(),
+            otherwise: Joi.forbidden()
+          }).description('User Password'),
+          id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i).when('grant', {
+            is: Joi.valid('client'),
+            then: Joi.required(),
+            otherwise: Joi.forbidden()
+          }).description('Client id'),
+          token: Joi.string().when('grant', {
+            is: Joi.valid('client'),
+            then: Joi.required(),
+            otherwise: Joi.forbidden()
+          }).description('Client token')
+        })
       },
       response: {
         status: {

@@ -1,11 +1,12 @@
 import jwt from 'jsonwebtoken';
 import Promise from 'bluebird';
 import {
-  map, assign, get, merge
+  map, assign, get, merge, pick
 } from 'lodash';
 
 import Project from '../src/database/models/project.model';
 import User from '../src/database/models/user.model';
+import Client from '../src/database/models/client.model';
 import { api } from '../src/config';
 
 export const HOST = 'http://localhost:3000';
@@ -41,7 +42,11 @@ export const fullProject = {
     }
   }],
   users: []
-}
+};
+
+export const clientTest = {
+  name: 'test client'
+};
 
 export const createUsers = () =>
   User.remove({}).exec()
@@ -62,3 +67,12 @@ export const createFullProject = ({ _id }) =>
     .create(merge(fullProject, {
       users: [{ user: _id , role: 'owner'}]
     })));
+
+export const createClient = ({ _id }) =>
+  Client.remove({}).exec()
+  .then(() =>
+    Client.create(merge(clientTest, { owner: _id })))
+    .then(client => assign({
+      client,
+      token: jwt.sign(merge(pick(client, ['_id']), { role: 'client' }), get(api, 'secret', ''))
+    }));

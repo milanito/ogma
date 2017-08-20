@@ -91,7 +91,7 @@ const clientRoutes = (server, options, next) => {
         },
         payload: {
           token: Joi.boolean(),
-          name: Joi.string()
+          name: Joi.string().min(2)
         }
       },
       plugins: {

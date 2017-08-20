@@ -3,6 +3,7 @@ import {
 } from 'lodash';
 
 import User from '../database/models/user.model';
+import Client from '../database/models/client.model';
 
 /**
  * This function is used to create a query for a given
@@ -61,8 +62,21 @@ export const clientsListQuery = (user, _id = null) => {
 };
 
 /**
+ * This is the dictionnary for the functions to find the object
+ * to validate authentication
+ */
+const ROLES_FETCHERS = {
+  admin: id =>
+    User.findById(id),
+  client: id =>
+    Client.findById(id),
+  user: id =>
+    User.findById(id)
+};
+
+/**
  * This function will validate a decoded token by fetching the
- * database for the user
+ * database for the user or the client
  * @param { Object } decoded the decoded token
  * @param { Object } request the Hapi request object
  * @param { Function } callback the callback function to call
@@ -70,10 +84,11 @@ export const clientsListQuery = (user, _id = null) => {
  * @return { Void } Nothing
  */
 export const validateUser = (decoded, request, callback) =>
-  User.findById(get(decoded, '_id', ''))
+  get(ROLES_FETCHERS, get(decoded, 'role', ''),
+    () => callback(new Error('Role does not exists')))(get(decoded, '_id', ''))
   .exec()
-  .then((user) => {
-    if (isNull(user)) {
+  .then((obj) => {
+    if (isNull(obj)) {
       return callback(null, false);
     }
     return callback(null, true);

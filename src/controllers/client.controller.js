@@ -5,7 +5,7 @@ import {
   conflict, notFound, badImplementation
 } from 'boom';
 import {
-  get, set,
+  get, set, has,
   merge, isNull, map
 } from 'lodash';
 
@@ -72,8 +72,14 @@ export const updateClient = (request, reply) =>
     if (isNull(client)) {
       return reply(notFound(new Error('Client not found')));
     }
-    set(client, 'token', null);
-    client.markModified('token');
+    if (get(request, 'payload.token', false)) {
+      set(client, 'token', null);
+      client.markModified('token');
+    }
+    if (has(get(request, 'payload', {}), 'name')) {
+      set(client, 'name', get(request, 'payload.name', ''));
+      client.markModified('name');
+    }
     return client.save()
       .then(client => reply(client));
   })

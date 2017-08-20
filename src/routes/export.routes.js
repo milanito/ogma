@@ -51,13 +51,8 @@ const exportRoutes = (server, options, next) => {
             rules: [{ effect: 'permit' }]
           }, {
             target: { 'credentials:role': 'client' },
-            apply: 'permit-overrides',
-            rules:[{
-              target: { 'credentials:projects': { field: 'payload:projects' } },
-              effect: 'permit'
-            }, {
-              effect: 'deny'
-            }]
+            apply: 'deny-overrides',
+            rules: [{ effect: 'permit' }]
           }]
         }
       },
@@ -151,13 +146,8 @@ const exportRoutes = (server, options, next) => {
             rules: [{ effect: 'permit' }]
           }, {
             target: { 'credentials:role': 'client' },
-            apply: 'permit-overrides',
-            rules:[{
-              target: { 'credentials:projects': { field: 'payload:projects' } },
-              effect: 'permit'
-            }, {
-              effect: 'deny'
-            }]
+            apply: 'deny-overrides',
+            rules: [{ effect: 'permit' }]
           }]
         }
       },

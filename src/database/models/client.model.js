@@ -41,12 +41,8 @@ clientSchema.methods = {
    */
   compareToken: function compareToken(token) {
     const self = this;
-    return new Promise((resolve) => {
-      if (isEqual(get(self, 'token', ''), token)) {
-        return resolve(true);
-      }
-      return resolve(false);
-    });
+    return new Promise((resolve) =>
+      resolve(isEqual(get(self, 'token', ''), token)));
   }
 };
 
@@ -61,7 +57,7 @@ clientSchema.pre('save', function preSave(next) {
         !isEqual(get(client, '_id', ''), get(self, '_id', '')))) {
       return next(new Error('Client name already registered'));
     }
-    if (!isNull(get(self, 'token', null))) {
+    if (isNull(get(self, 'token', null))) {
       return crypto.randomBytes(48, (err, buffer) => {
         if (err) {
           return next(err);
