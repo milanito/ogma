@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import {
   ACCEPTED, CREATED
 } from 'http-status';
@@ -6,7 +7,7 @@ import {
 } from 'boom';
 import {
   get, set, has,
-  merge, isNull, map
+  merge, isNull, map, assign
 } from 'lodash';
 
 import Client from '../database/models/client.model';
@@ -21,7 +22,8 @@ import { clientsListQuery } from '../helpers';
 export const listClients = (request, reply) =>
   Client.find(clientsListQuery(get(request, 'auth.credentials', {})))
   .exec()
-  .then(users => reply(map(users, user => user.profile)))
+  .then(clients => reply(map(clients,
+    ({ _id, token }) => assign({ id: _id, token }))))
   .catch(err => reply(badImplementation(err)));
 
 /**
@@ -35,7 +37,7 @@ export const createClient = (request, reply) =>
   .create(merge(get(request, 'payload', {}), {
     owner: get(request, 'auth.credentials._id', '')
   }))
-  .then(client => reply(client).code(CREATED))
+  .then(({ _id, token }) => reply(assign({ id: _id, token })).code(CREATED))
   .catch(err => reply(conflict(err)));
 
 /**
@@ -46,14 +48,18 @@ export const createClient = (request, reply) =>
  */
 export const detailClient = (request, reply) =>
   Client
-  .findOne(clientsListQuery(get(request, 'auth.credentials', {}),
-    get(request, 'params.id', '')))
+  .findOne(merge(clientsListQuery(get(request, 'auth.credentials', {})),
+    { _id: new mongoose.Types.ObjectId(get(request, 'params.id', '')) }))
   .exec()
   .then((client) => {
     if (isNull(client)) {
       return reply(notFound(new Error('Client not found')));
     }
-    return reply(client);
+    return reply(assign({
+      id: get(client, '_id', ''),
+      projects: get(client, 'projects', []),
+      token: get(client, 'token', '')
+    }));
   })
   .catch(err => reply(badImplementation(err)));
 
@@ -81,7 +87,10 @@ export const updateClient = (request, reply) =>
       client.markModified('name');
     }
     return client.save()
-      .then(client => reply(client));
+      .then(({ _id, token }) => reply(assign({
+        id: _id,
+        token
+      })));
   })
   .catch(err => reply(badImplementation(err)));
 

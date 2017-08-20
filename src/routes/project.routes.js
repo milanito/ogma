@@ -8,6 +8,9 @@ import {
   getLocales, addLocale, updateLocale, deleteLocale,
 } from '../controllers/locale.controller';
 import {
+  getClients, addClient, deleteClient,
+} from '../controllers/projectClient.controller';
+import {
   getUsers, addUser, updateUser, deleteUser,
 } from '../controllers/projectUser.controller';
 import {
@@ -407,6 +410,18 @@ const projectRoutes = (server, options, next) => {
     method: 'DELETE',
     path: '/{id}/locales',
     handler: deleteLocale
+  }, {
+    method: 'GET',
+    path: '/{id}/clients',
+    handler: getClients
+  }, {
+    method: 'POST',
+    path: '/{id}/clients',
+    handler: addClient
+  }, {
+    method: 'DELETE',
+    path: '/{id}/clients',
+    handler: deleteClient
   }], def => server.route(def));
 
   next();

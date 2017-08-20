@@ -25,10 +25,10 @@ const clientSchema = new mongoose.Schema({
   token: {
     type: String,
   },
-  projects: {
-    type: Array,
-    default: []
-  },
+  projects: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Project',
+  }],
 });
 
 clientSchema.methods = {
