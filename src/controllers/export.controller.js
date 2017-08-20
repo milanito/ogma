@@ -9,7 +9,7 @@ import {
 
 import Client from '../database/models/client.model';
 import Project from '../database/models/project.model';
-import EXPORTERS from '../exporter';
+import EXPORTERS, { getContentType } from '../exporter';
 
 import { projectsListQueryWithClient, projectsListQuery } from '../helpers';
 
@@ -51,7 +51,8 @@ export const exporterProject = (request, reply) =>
     }
 
     return reply(_exportLocale(nth(get(project, 'locales', []), idx),
-      get(request, 'params.type', ''), get(project, 'keys', [])));
+      get(request, 'params.type', ''), get(project, 'keys', [])))
+      .type(getContentType(get(request, 'params.type', '')));
   })
   .catch(err => reply(badImplementation(err)));
 
@@ -92,7 +93,8 @@ export const exporterProjects = (request, reply) =>
         code: get(request, 'params.locale', '')
       }), get(request, 'params.type', ''),
       reduce(projects,
-        (total, project) => uniq(union(total, get(project, 'keys', []))), [])));
+        (total, project) => uniq(union(total, get(project, 'keys', []))), [])))
+      .type(getContentType(get(request, 'params.type', '')));
   })
   .catch(err => reply(badImplementation(err)));
 
@@ -139,7 +141,8 @@ export const exporterClientProjects = (request, reply) =>
             code: get(request, 'params.locale', '')
           }), get(request, 'params.type', ''),
           reduce(projects,
-            (total, project) => uniq(union(total, get(project, 'keys', []))), [])));
+            (total, project) => uniq(union(total, get(project, 'keys', []))), [])))
+          .type(getContentType(get(request, 'params.type', '')));
       });
   })
   .catch(err => reply(badImplementation(err)));

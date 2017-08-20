@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { expect } from 'chai';
 import {
   BAD_REQUEST, UNAUTHORIZED, CONFLICT, CREATED,
-  NOT_FOUND, OK
+  NOT_FOUND, OK, FORBIDDEN, ACCEPTED
 } from 'http-status';
 import {
   forEach, omit, get, merge, clone
@@ -103,7 +103,7 @@ describe('# User Tests', () => {
     });
   });
 
-  describe('## User detail : POST /api/users/{id}', () => {
+  describe('## User detail : GET /api/users/{id}', () => {
     describe('## Error cases', () => {
       it('should fail without a token', () =>
         request(HOST)
@@ -141,6 +141,101 @@ describe('# User Tests', () => {
         .get(`/api/users/${normalUser._id}`)
         .set('Authorization', `Bearer ${tokenUser}`)
         .expect(OK));
+    });
+  });
+
+  describe('## User Update : PATCH /api/users/{id}', () => {
+    describe('## Error cases', () => {
+      it('should fail without a token', () =>
+        request(HOST)
+        .patch(`/api/users/${normalUser._id}`)
+        .send({ email: 'test@new.com', password: 'qfsfsdf' })
+        .expect(UNAUTHORIZED));
+
+      it('should not accept a wrong id', () =>
+        request(HOST)
+        .get(`/api/users/toto`)
+        .send({ email: 'test@new.com', password: 'qfsfsdf' })
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(BAD_REQUEST));
+
+      it('should not accept a wrong email', () =>
+        request(HOST)
+        .patch(`/api/users/${normalUser._id}`)
+        .send({ email: 'test', password: 'qfsfsdf' })
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(BAD_REQUEST));
+
+      it('should return 404 on not found user', () =>
+        request(HOST)
+        .patch(`/api/users/${new mongoose.Types.ObjectId()}`)
+        .send({ email: 'test@new.com', password: 'qfsfsdf' })
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(NOT_FOUND));
+
+      it('should not update another user as normal user', () =>
+        request(HOST)
+        .get(`/api/users/${adminUser._id}`)
+        .send({ email: 'test@new.com', password: 'qfsfsdf' })
+        .set('Authorization', `Bearer ${tokenUser}`)
+        .expect(UNAUTHORIZED));
+    });
+
+    describe('## Success cases', () => {
+      it('should update any user as an admin', () =>
+        request(HOST)
+        .patch(`/api/users/${normalUser._id}`)
+        .send({ email: 'test@new.com', password: 'qfsfsdf' })
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(OK));
+
+      it('should update itself as a normal user', () =>
+        request(HOST)
+        .patch(`/api/users/${normalUser._id}`)
+        .send({ email: 'test@new2.com', password: 'qfsfsdf' })
+        .set('Authorization', `Bearer ${tokenUser}`)
+        .expect(OK));
+    });
+  });
+
+  describe('## User Delete : DELETE /api/users/{id}', () => {
+    describe('## Error cases', () => {
+      it('should fail without a token', () =>
+        request(HOST)
+        .delete(`/api/users/${normalUser._id}`)
+        .expect(UNAUTHORIZED));
+
+      it('should not accept a wrong id', () =>
+        request(HOST)
+        .delete(`/api/users/toto`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(BAD_REQUEST));
+
+      it('should return 404 on not found user', () =>
+        request(HOST)
+        .delete(`/api/users/${new mongoose.Types.ObjectId()}`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(NOT_FOUND));
+
+      it('should not delete another user as normal user', () =>
+        request(HOST)
+        .delete(`/api/users/${adminUser._id}`)
+        .set('Authorization', `Bearer ${tokenUser}`)
+        .expect(UNAUTHORIZED));
+
+      it('should not delete oneself', () =>
+        request(HOST)
+        .delete(`/api/users/${adminUser._id}`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(FORBIDDEN));
+    });
+
+    describe('## Success cases', () => {
+      it('should delete any user as an admin', () =>
+        request(HOST)
+        .delete(`/api/users/${normalUser._id}`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(ACCEPTED));
     });
   });
 });

@@ -9,7 +9,7 @@ import flatjson from './flatjson';
  * CSV format
  * @param { Array } keys the locale's keys
  * @param { Array } pKeys the project's keys
- * @return { String } A XML string
+ * @return { String } A CSV string
  */
 export default (keys, pKeys) =>
   join(reduce(flatjson(keys, pKeys), (total, value, key) => {

@@ -5,7 +5,7 @@ import {
   conflict, notFound, badImplementation, forbidden
 } from 'boom';
 import {
-  get, omit, clone,
+  get, clone, pick,
   merge, isNull, map, isEqual
 } from 'lodash';
 
@@ -68,7 +68,7 @@ export const updateUser = (request, reply) =>
       return reply(notFound(new Error('User not found')));
     }
     return merge(clone(user),
-      omit(get(request, 'payload', {}), ['_id', 'hash', 'password']))
+      pick(get(request, 'payload', {}), ['email', 'password']))
       .save()
       .then(user => reply(user.profile));
   })

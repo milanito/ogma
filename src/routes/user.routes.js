@@ -96,6 +96,10 @@ const userRoutes = (server, options, next) => {
       validate: {
         params: {
           id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i)
+        },
+        payload: {
+          email: Joi.string().email().optional().description('New user email'),
+          password: Joi.string().optional().description('New user password')
         }
       },
       plugins: {

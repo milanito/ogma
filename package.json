@@ -37,7 +37,8 @@
     "lodash": "^4.17.4",
     "lout": "^10.0.2",
     "mongoose": "^4.11.7",
-    "vision": "^4.1.1"
+    "vision": "^4.1.1",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
