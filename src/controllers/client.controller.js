@@ -71,8 +71,8 @@ export const detailClient = (request, reply) =>
  */
 export const updateClient = (request, reply) =>
   Client
-  .findOne(clientsListQuery(get(request, 'auth.credentials', {}),
-    get(request, 'params.id', '')))
+  .findOne(merge(clientsListQuery(get(request, 'auth.credentials', {})),
+    { _id: new mongoose.Types.ObjectId(get(request, 'params.id', '')) }))
   .exec()
   .then((client) => {
     if (isNull(client)) {
@@ -102,8 +102,8 @@ export const updateClient = (request, reply) =>
  */
 export const deleteClient = (request, reply) =>
   Client
-  .findOne(clientsListQuery(get(request, 'auth.credentials', {}),
-    get(request, 'params.id', '')))
+  .findOne(merge(clientsListQuery(get(request, 'auth.credentials', {})),
+    { _id: new mongoose.Types.ObjectId(get(request, 'params.id', '')) }))
   .exec()
   .then((client) => {
     if (isNull(client)) {

@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { expect } from 'chai';
 import {
   BAD_REQUEST, UNAUTHORIZED, CONFLICT, CREATED,
-  NOT_FOUND, OK
+  NOT_FOUND, OK, ACCEPTED
 } from 'http-status';
 import {
   forEach, omit, get, merge, clone, pick
@@ -119,6 +119,81 @@ describe('# Client Tests', () => {
         .get(`/api/clients/${get(clientCreated, '_id', '')}`)
         .set('Authorization', `Bearer ${tokenAdmin}`)
         .expect(OK));
+    });
+  });
+
+  describe('## Client Update : PATCH /api/clients/{id}', () => {
+    describe('## Error cases', () => {
+      it('should fail without a token', () =>
+        request(HOST)
+        .patch(`/api/clients/${get(clientCreated, '_id', '')}`)
+        .send({ name: 'new name', token: false })
+        .expect(UNAUTHORIZED));
+
+      it('should not accept a wrong id', () =>
+        request(HOST)
+        .patch(`/api/clients/toto`)
+        .send({ name: 'new name', token: false })
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(BAD_REQUEST));
+
+      it('should not accept a wrong token', () =>
+        request(HOST)
+        .patch(`/api/clients/toto`)
+        .send({ name: 'new name', token: 'tototo' })
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(BAD_REQUEST));
+
+      it('should return 404 on not found client', () =>
+        request(HOST)
+        .patch(`/api/clients/${new mongoose.Types.ObjectId()}`)
+        .send({ name: 'new name', token: false })
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(NOT_FOUND));
+    });
+
+    describe('## Success cases', () => {
+      it('should update a client', () =>
+        request(HOST)
+        .patch(`/api/clients/${get(clientCreated, '_id', '')}`)
+        .send({ name: 'new name', token: false })
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(OK));
+    });
+  });
+
+  describe('## Client Delete : DELETE /api/clients/{id}', () => {
+    describe('## Error cases', () => {
+      it('should fail without a token', () =>
+        request(HOST)
+        .delete(`/api/clients/${get(clientCreated, '_id', '')}`)
+        .expect(UNAUTHORIZED));
+
+      it('should not accept a wrong id', () =>
+        request(HOST)
+        .delete(`/api/clients/toto`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(BAD_REQUEST));
+
+      it('should not accept a wrong token', () =>
+        request(HOST)
+        .delete(`/api/clients/toto`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(BAD_REQUEST));
+
+      it('should return 404 on not found client', () =>
+        request(HOST)
+        .delete(`/api/clients/${new mongoose.Types.ObjectId()}`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(NOT_FOUND));
+    });
+
+    describe('## Success cases', () => {
+      it('should delete a client', () =>
+        request(HOST)
+        .delete(`/api/clients/${get(clientCreated, '_id', '')}`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(ACCEPTED));
     });
   });
 });
