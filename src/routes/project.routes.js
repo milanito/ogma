@@ -175,7 +175,7 @@ const projectRoutes = (server, options, next) => {
           id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i)
         },
         payload: {
-          keys: Joi.array().min(1).items(Joi.string().required())
+          keys: Joi.array().min(1).items(Joi.string().required()).required()
         }
       },
       plugins: {
@@ -227,7 +227,7 @@ const projectRoutes = (server, options, next) => {
           id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i)
         },
         payload: {
-          keys: Joi.array().min(1).items(Joi.string().required())
+          keys: Joi.array().min(1).items(Joi.string().required()).required()
         }
       },
       plugins: {
