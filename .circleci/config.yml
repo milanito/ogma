@@ -76,6 +76,23 @@ jobs:
           key: coverage-{{ checksum "coverage/lcov.info" }}
           paths: coverage
 
+  coveralls:
+    docker:
+      - image: circleci/node:6.10.3
+        user: root
+    steps:
+      - checkout
+      - restore_cache:
+          key: yarn-{{ checksum "yarn.lock" }}
+      - restore_cache:
+          key: coverage
+      - run:
+          name: Install coverage
+          command: npm install -g coveralls
+      - run:
+          name: Update coverage
+          command: cat ./coverage/lcov.info | coveralls
+
   codacy:
     docker:
       - image: circleci/node:6.10.3
@@ -122,6 +139,13 @@ workflows:
       - test:
           requires:
             - install
+      - coveralls:
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - master
       - codacy:
           requires:
             - test

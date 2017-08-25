@@ -68,10 +68,10 @@ export const createFullProject = ({ _id }) =>
       users: [{ user: _id , role: 'owner'}]
     })));
 
-export const createClient = ({ _id }) =>
+export const createClient = ({ _id }, data = {}) =>
   Client.remove({}).exec()
   .then(() =>
-    Client.create(merge(clientTest, { owner: _id })))
+    Client.create(merge(clientTest, { owner: _id }, data)))
     .then(client => assign({
       client,
       token: jwt.sign(merge(pick(client, ['_id']), { role: 'client' }), get(api, 'secret', ''))
