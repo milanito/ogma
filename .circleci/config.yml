@@ -16,13 +16,11 @@ jobs:
       - run:
           name: Install dependencies
           command: yarn install --pure-lockfile
-      - run:
-          name: Install bcrypt
-          command: npm install bcrypt
       - save_cache:
           key: yarn-{{ checksum "yarn.lock" }}
           paths:
             - "~/.npm"
+            - "~/.npmrc"
             - "node_modules"
 
   docs:
