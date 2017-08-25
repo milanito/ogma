@@ -1,5 +1,6 @@
 import Joi from 'joi';
-import { forEach } from 'lodash';
+import { forEach, map, replace } from 'lodash';
+import countryLanguage from 'country-language';
 
 import {
   createProject, listProjects, detailProject, updateProject, deleteProject,
@@ -397,19 +398,118 @@ const projectRoutes = (server, options, next) => {
   }, {
     method: 'GET',
     path: '/{id}/locales',
-    handler: getLocales
+    handler: getLocales,
+    config: {
+      auth: 'jwt',
+      validate: {
+        params: {
+          id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i)
+          .description('The project ID')
+        }
+      },
+      plugins: {
+        rbac: {
+          target: [{
+            'credentials:role': 'admin'
+          }, {
+            'credentials:role': 'user',
+          }],
+          apply: 'deny-overrides',
+          rules: [{ effect: 'permit' }]
+        }
+      }
+    }
   }, {
     method: 'POST',
     path: '/{id}/locales',
-    handler: addLocale
+    handler: addLocale,
+    config: {
+      auth: 'jwt',
+      validate: {
+        params: {
+          id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i)
+          .description('The project ID')
+        },
+        payload: {
+          locale: Joi.string()
+          .only(map(countryLanguage.getLocales(),
+            locale => replace(locale, /-/g, '_'))).required()
+          .description('The locale to add'),
+        }
+      },
+      plugins: {
+        rbac: {
+          target: [{
+            'credentials:role': 'admin'
+          }, {
+            'credentials:role': 'user',
+          }],
+          apply: 'deny-overrides',
+          rules: [{ effect: 'permit' }]
+        }
+      }
+    }
   }, {
     method: 'PATCH',
     path: '/{id}/locales',
-    handler: updateLocale
+    handler: updateLocale,
+    config: {
+      auth: 'jwt',
+      validate: {
+        params: {
+          id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i)
+          .description('The project ID')
+        },
+        payload: {
+          locale: Joi.string()
+          .only(map(countryLanguage.getLocales(),
+            locale => replace(locale, /-/g, '_'))).required()
+          .description('The locale to add'),
+          keys: Joi.object().required().description('The keys to update')
+        }
+      },
+      plugins: {
+        rbac: {
+          target: [{
+            'credentials:role': 'admin'
+          }, {
+            'credentials:role': 'user',
+          }],
+          apply: 'deny-overrides',
+          rules: [{ effect: 'permit' }]
+        }
+      }
+    }
   }, {
     method: 'DELETE',
     path: '/{id}/locales',
-    handler: deleteLocale
+    handler: deleteLocale,
+    config: {
+      auth: 'jwt',
+      validate: {
+        params: {
+          id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i)
+          .description('The project ID')
+        },
+        payload: {
+          locale: Joi.string()
+          .only(map(countryLanguage.getLocales(),
+            locale => replace(locale, /-/g, '_'))).required()
+          .description('The locale to delete'),
+        }
+      },
+      plugins: {
+        rbac: {
+          target: [{
+            'credentials:role': 'admin'
+          }, {
+            'credentials:role': 'user',
+          }],
+          apply: 'deny-overrides',
+          rules: [{ effect: 'permit' }]
+        }
+      }
+    }
   }, {
     method: 'GET',
     path: '/{id}/clients',
