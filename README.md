@@ -6,6 +6,26 @@ Ogma is an API for translation
 
 **Warning** : This is a work in progress
 
+## Three commands install
+
+To quickly install Ogma, you need to have the following installed :
+
+- wget
+- [Docker](https://www.docker.com/)
+- [Docker compose](https://docs.docker.com/compose/)
+
+And then simply enter the following commands :
+
+```bash
+$ wget https://raw.githubusercontent.com/milanito/ogma/master/docker-compose/config-hub.yaml -O docker-compose.ogma.yaml
+$ docker-compose -f docker-compose.ogma.yaml pull
+$ ADMIN_USER=true ADMIN_EMAIL=test@test.com ADMIN_PASSWORD=password docker-compose -f docker-compose.ogma.yaml up
+```
+
+This will launch a local instance of Ogma accessible at the port `3000` with one admin user `test@test.com`/`password`.
+
+> Warning do not use those credentials in production !!!
+
 ## Usage
 
 First clone the project, then install the modules by entering the following commands :
@@ -21,17 +41,19 @@ $ yarn
 You can test the API using the [docker image](https://hub.docker.com/r/mrumanlife/ogma), the easiest way to do so is to use the provided docker file :
 
 ```bash
-$ docker-compose -f docker-compose/config-hub.yaml up
+$ ADMIN_USER=false docker-compose -f docker-compose/config-hub.yaml up
 ```
 
 Or you can pull the image and run it :
 
 ```
 $ docker pull mrumanlife/ogma
-$ docker run -P mrumanlife/ogma
+$ ADMIN_USER=false docker run -P mrumanlife/ogma
 ```
 
 > Do not forget that the API needs a running instance of mongodb
+
+Check the [dedicated env variable](#env-variables) to see how to populate admin user
 
 ### Docker Locally
 
@@ -114,6 +136,9 @@ The technical documentation is also accessible [here](https://s3-eu-west-1.amazo
 
 There are several variables you can use :
 
+- `ADMIN_USER` : Populate the admin user
+- `ADMIN_EMAIL` : Admin email
+- `ADMIN_PASSWORD` : Admin password
 - `DB_HOST` : the mongodb uri
 - `API_PORT` : the API Port. **Warning** : If you are to modify the port, please also update the `Dockerfile` to expose the right port
 - `API_HOST` : the API host, default to `0.0.0.0`
@@ -122,3 +147,15 @@ There are several variables you can use :
 - `LOG_NAME` : the log name
 
 Each variable has a default value
+
+### Populate admin user
+
+When setting the env variable `ADMIN_USER` to true, it will trigger the creation of an admin user with `ADMIN_EMAIL` as an email and `ADMIN_PASSWORD` has a password.
+
+> If a user already exists with this email, the creation will be skipped
+
+So you should launch your docker this way :
+
+```bash
+$ ADMIN_USER=true ADMIN_EMAIL=some@email.com ADMIN_PASSWORD=somepassword docker-compose -f docker-compose/config-hub.yaml up
+```

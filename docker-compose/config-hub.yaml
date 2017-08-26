@@ -12,6 +12,9 @@ services:
     image: "mrumanlife/ogma:latest"
     environment:
       DB_HOST: "mongodb://mongo/translation"
+      ADMIN_USER: ${ADMIN_USER}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
     links:
       - mongo
     depends_on:

@@ -1,6 +1,9 @@
 import database from './database';
 import server from './server';
 import routes from './routes';
+import seed from './config/seed';
+
+const seedAdmin = process.env.ADMIN_USER || false;
 
 /**
  * This is the start function that will do
@@ -13,6 +16,12 @@ import routes from './routes';
  */
 const start = () =>
   database()
+  .then(() => {
+    if (seedAdmin) {
+      return seed();
+    }
+    return true;
+  })
   .then(server)
   .then(routes)
   .then(server =>
