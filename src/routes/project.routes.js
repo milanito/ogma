@@ -276,8 +276,10 @@ const projectRoutes = (server, options, next) => {
           id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i).description('The project ID')
         },
         payload: {
-          user: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i).description('The user ID'),
-          role: Joi.string().only(['editor', 'normal']).description('The user role in project')
+          user: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i).required()
+          .description('The user ID'),
+          role: Joi.string().only(['editor', 'normal']).required()
+          .description('The user role in project')
         }
       },
       plugins: {
@@ -320,11 +322,14 @@ const projectRoutes = (server, options, next) => {
       auth: 'jwt',
       validate: {
         params: {
-          id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i).description('The project ID')
+          id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i)
+          .description('The project ID')
         },
         payload: {
-          user: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i).description('The user ID'),
-          role: Joi.string().only(['editor', 'normal']).description('The new user role in project')
+          user: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i).required()
+          .description('The user ID'),
+          role: Joi.string().only(['editor', 'normal']).required()
+          .description('The new user role in project')
         }
       },
       plugins: {
@@ -365,7 +370,8 @@ const projectRoutes = (server, options, next) => {
           id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i).description('The project ID')
         },
         payload: {
-          user: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i).description('The user ID'),
+          user: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i).required()
+          .description('The user ID'),
         }
       },
       plugins: {
