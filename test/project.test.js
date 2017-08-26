@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { expect } from 'chai';
 import {
   BAD_REQUEST, UNAUTHORIZED, CONFLICT, CREATED,
-  NOT_FOUND, OK
+  NOT_FOUND, OK, ACCEPTED
 } from 'http-status';
 import {
   forEach, omit, get, merge, clone, keys, pick
@@ -92,6 +92,130 @@ describe('# Project Tests', () => {
         .set('Authorization', `Bearer ${tokenAdmin}`)
         .send({ name: 'new project' })
         .expect(CREATED));
+    });
+  });
+
+  describe('## Project Detail : GET /api/projects/{id}', () => {
+    describe('## Error cases', () => {
+      it('should fail without a token', () =>
+        request(HOST)
+        .get(`/api/projects/${get(project, '_id', '')}`)
+        .expect(UNAUTHORIZED));
+
+      it('should fail with a wrong user', () =>
+        request(HOST)
+        .get(`/api/projects/${get(project, '_id', '')}`)
+        .set('Authorization', `Bearer ${tokenUser}`)
+        .expect(NOT_FOUND));
+
+      it('should fail with a wrong ID', () =>
+        request(HOST)
+        .get('/api/projects/toto')
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(BAD_REQUEST));
+
+      it('should fail with a not existing project', () =>
+        request(HOST)
+        .get(`/api/projects/${new mongoose.Types.ObjectId()}`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(NOT_FOUND));
+    });
+
+    describe('## Success cases', () => {
+      it('should be ok with a good user', () =>
+        request(HOST)
+        .get(`/api/projects/${get(project, '_id', '')}`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(OK));
+    });
+  });
+
+  describe('## Project Update : PATCH /api/projects/{id}', () => {
+    describe('## Error cases', () => {
+      it('should fail without a token', () =>
+        request(HOST)
+        .patch(`/api/projects/${get(project, '_id', '')}`)
+        .send({ name: 'New name' })
+        .expect(UNAUTHORIZED));
+
+      it('should fail with a wrong user', () =>
+        request(HOST)
+        .patch(`/api/projects/${get(project, '_id', '')}`)
+        .set('Authorization', `Bearer ${tokenUser}`)
+        .send({ name: 'New name' })
+        .expect(NOT_FOUND));
+
+      it('should fail with a wrong ID', () =>
+        request(HOST)
+        .patch('/api/projects/toto')
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .send({ name: 'New name' })
+        .expect(BAD_REQUEST));
+
+      it('should fail with no name', () =>
+        request(HOST)
+        .patch(`/api/projects/${get(project, '_id', '')}`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .send({ })
+        .expect(BAD_REQUEST));
+
+      it('should fail with a wrong name', () =>
+        request(HOST)
+        .patch(`/api/projects/${get(project, '_id', '')}`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .send({ name: 'N' })
+        .expect(BAD_REQUEST));
+
+      it('should fail with a not existing project', () =>
+        request(HOST)
+        .patch(`/api/projects/${new mongoose.Types.ObjectId()}`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .send({ name: 'New name' })
+        .expect(NOT_FOUND));
+    });
+
+    describe('## Success cases', () => {
+      it('should be ok with a good user', () =>
+        request(HOST)
+        .patch(`/api/projects/${get(project, '_id', '')}`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .send({ name: 'New name' })
+        .expect(OK));
+    });
+  });
+
+  describe('## Project Delete : DELETE /api/projects/{id}', () => {
+    describe('## Error cases', () => {
+      it('should fail without a token', () =>
+        request(HOST)
+        .delete(`/api/projects/${get(project, '_id', '')}`)
+        .expect(UNAUTHORIZED));
+
+      it('should fail with a wrong user', () =>
+        request(HOST)
+        .delete(`/api/projects/${get(project, '_id', '')}`)
+        .set('Authorization', `Bearer ${tokenUser}`)
+        .expect(NOT_FOUND));
+
+      it('should fail with a not existing project', () =>
+        request(HOST)
+        .delete(`/api/projects/${new mongoose.Types.ObjectId()}`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(NOT_FOUND));
+
+      it('should fail with a wrong ID', () =>
+        request(HOST)
+        .delete('/api/projects/toto')
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(BAD_REQUEST));
+    });
+
+    describe('## Success cases', () => {
+      it('should be ok with a good user', () =>
+        request(HOST)
+        .delete(`/api/projects/${get(project, '_id', '')}`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(ACCEPTED));
     });
   });
 });
