@@ -123,7 +123,9 @@ const exportRoutes = (server, options, next) => {
           type: Joi.string().only(keys(exporters))
         },
         payload: {
-          projects: Joi.array().items(Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i))
+          projects: Joi.array()
+          .items(Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i))
+          .min(1).required()
         }
       },
       plugins: {

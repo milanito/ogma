@@ -73,7 +73,7 @@ describe('# Project Client Tests', () => {
     });
 
     describe('## Success cases', () => {
-      before(() => createClient(adminUser, { projects: [ get(project, '_id', '') ] }));
+      before(() => createClient(adminUser, { projects: [get(project, '_id', '')] }));
 
       it('should return a 200 for an authorized user', () =>
         request(HOST)

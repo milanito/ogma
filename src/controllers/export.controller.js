@@ -114,6 +114,11 @@ export const exporterClientProjects = (request, reply) =>
     if (isNull(client)) {
       return reply(notFound(new Error('Client does not exists')));
     }
+
+    if (isEmpty(get(client, 'projects', []))) {
+      return reply(notFound(new Error('Client does not have any project')));
+    }
+
     return Promise
       .all(map(get(client, 'projects', []), id =>
         Project.findById(id).exec()))
