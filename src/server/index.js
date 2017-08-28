@@ -3,6 +3,7 @@ import bunyan from 'bunyan';
 import Brok from 'brok';
 import jwt2 from 'hapi-auth-jwt2';
 import rbac from 'hapi-rbac';
+import cors from 'hapi-cors';
 import vision from 'vision';
 import inert from 'inert';
 import lout from 'lout';
@@ -35,6 +36,11 @@ const PLUGINS = [{
   register: inert
 }, {
   register: lout
+}, {
+  register: cors,
+  options: {
+    methods: ['POST, GET, OPTIONS, PATCH'],
+  }
 }];
 
 /**

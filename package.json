@@ -30,6 +30,7 @@
     "hapi": "^16.5.2",
     "hapi-auth-jwt2": "^7.3.0",
     "hapi-bunyan": "^0.7.0",
+    "hapi-cors": "^1.0.1",
     "hapi-rbac": "^2.3.0",
     "http-status": "^1.0.1",
     "inert": "^4.2.1",

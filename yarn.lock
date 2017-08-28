@@ -2292,6 +2292,12 @@ hapi-bunyan@^0.7.0:
   dependencies:
     lodash "^3.0.0"
 
+hapi-cors@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/hapi-cors/-/hapi-cors-1.0.1.tgz#ecb636524bcea7b6cbd457cb7a2434f58127cca9"
+  dependencies:
+    joi "^7.0.1"
+
 hapi-rbac@^2.3.0:
   version "2.3.0"
   resolved "https://registry.npmjs.org/hapi-rbac/-/hapi-rbac-2.3.0.tgz#c2068717d563bf562fecac620ff2a75876d7bbbc"
@@ -2379,6 +2385,10 @@ heavy@^4.0.4:
 hoek@2.x.x:
   version "2.16.3"
   resolved "https://registry.npmjs.org/hoek/-/hoek-2.16.3.tgz#20bb7403d3cea398e91dc4710a8ff1b8274a25ed"
+
+hoek@3.x.x:
+  version "3.0.4"
+  resolved "https://registry.npmjs.org/hoek/-/hoek-3.0.4.tgz#268adff66bb6695c69b4789a88b1e0847c3f3123"
 
 hoek@4.1.0:
   version "4.1.0"
@@ -2832,6 +2842,15 @@ joi@^6.10.1:
     isemail "1.x.x"
     moment "2.x.x"
     topo "1.x.x"
+
+joi@^7.0.1:
+  version "7.3.0"
+  resolved "https://registry.npmjs.org/joi/-/joi-7.3.0.tgz#4d9c9f181830444083665b5b6cd5b8ca6779a5e9"
+  dependencies:
+    hoek "3.x.x"
+    isemail "2.x.x"
+    moment "2.x.x"
+    topo "2.x.x"
 
 js-tokens@^3.0.0, js-tokens@^3.0.2:
   version "3.0.2"
