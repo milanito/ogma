@@ -39,7 +39,7 @@ const PLUGINS = [{
 }, {
   register: cors,
   options: {
-    methods: ['POST, GET, OPTIONS, PATCH'],
+    methods: ['POST, GET, OPTIONS, PATCH, DELETE'],
   }
 }];
 

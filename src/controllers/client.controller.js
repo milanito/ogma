@@ -23,7 +23,7 @@ export const listClients = (request, reply) =>
   Client.find(clientsListQuery(get(request, 'auth.credentials', {})))
   .exec()
   .then(clients => reply(map(clients,
-    ({ _id, token }) => assign({ id: _id, token }))))
+    ({ _id, token, name }) => assign({ id: _id, token, name }))))
   .catch(err => reply(badImplementation(err)));
 
 /**
@@ -57,6 +57,7 @@ export const detailClient = (request, reply) =>
     }
     return reply(assign({
       id: get(client, '_id', ''),
+      name: get(client, 'name', ''),
       projects: get(client, 'projects', []),
       token: get(client, 'token', '')
     }));

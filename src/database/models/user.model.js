@@ -56,7 +56,7 @@ userSchema.methods = {
 
 userSchema.pre('save', function preSave(next) {
   const self = this;
-  self.constructor
+  return self.constructor
   .findOne({ email: self.email })
   .exec()
   .then((user) => {
