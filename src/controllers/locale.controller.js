@@ -68,6 +68,47 @@ export const addLocale = (request, reply) =>
  * @param { Function } reply the Hapi reply object
  * @return { Promise } a promise that resolves
  */
+export const updateLocales = (request, reply) =>
+  Project
+  .findOne(merge({
+    _id: get(request, 'params.id', '')
+  }, projectsListQuery(get(request, 'auth.credentials', {}), true)))
+  .exec()
+  .then((project) => {
+    if (isNull(project)) {
+      return reply(notFound(new Error('Project not found')));
+    }
+
+    forEach(get(request, 'payload.locales', []), ({ code, translations }) => {
+      const idx = findIndex(get(project, 'locales', []), locale =>
+        isEqual(get(locale, 'code', ''), code));
+
+      if (isEqual(idx, -1)) {
+        return reply(notFound(new Error('Locale is not in project')));
+      }
+
+      if (size(filter(keys(translations),
+        key => isEqual(indexOf(get(project, 'keys', []), key), -1))) > 0) {
+        return reply(forbidden(new Error('Keys are missing in project')));
+      }
+
+      return forEach(translations, (value, key) =>
+        set(get(nth(get(project, 'locales', []), idx), 'keys', {}), key, value));
+    });
+
+    project.markModified('locales');
+
+    return project.save()
+    .then(() => reply(get(project, 'locales', [])));
+  })
+  .catch(err => reply(badImplementation(err)));
+
+/**
+ * This function add key's translation to the given locale
+ * @param { Object } request the Hapi request object
+ * @param { Function } reply the Hapi reply object
+ * @return { Promise } a promise that resolves
+ */
 export const updateLocale = (request, reply) =>
   Project
   .findOne(merge({
@@ -99,7 +140,6 @@ export const updateLocale = (request, reply) =>
     .then(() => reply(get(project, 'locales', [])));
   })
   .catch(err => reply(badImplementation(err)));
-
 
 /**
  * This function removes the given locale from the project

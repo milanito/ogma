@@ -6,7 +6,7 @@ import {
   createProject, listProjects, detailProject, updateProject, deleteProject,
 } from '../controllers/project.controller';
 import {
-  getLocales, addLocale, updateLocale, deleteLocale,
+  getLocales, addLocale, updateLocale, updateLocales, deleteLocale,
 } from '../controllers/locale.controller';
 import {
   getClients, addClient, deleteClient,
@@ -470,8 +470,41 @@ const projectRoutes = (server, options, next) => {
           locale: Joi.string()
           .only(map(countryLanguage.getLocales(),
             locale => replace(locale, /-/g, '_'))).required()
-          .description('The locale to add'),
+          .description('The locale to edit'),
           keys: Joi.object().required().description('The keys to update')
+        }
+      },
+      plugins: {
+        rbac: {
+          target: [{
+            'credentials:role': 'admin'
+          }, {
+            'credentials:role': 'user',
+          }],
+          apply: 'deny-overrides',
+          rules: [{ effect: 'permit' }]
+        }
+      }
+    }
+  }, {
+    method: 'PATCH',
+    path: '/{id}/locales/multiple',
+    handler: updateLocales,
+    config: {
+      auth: 'jwt',
+      validate: {
+        params: {
+          id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i)
+          .description('The project ID')
+        },
+        payload: {
+          locales: Joi.array().items(Joi.object({
+            code: Joi.string()
+              .only(map(countryLanguage.getLocales(),
+                locale => replace(locale, /-/g, '_'))).description('The locale code'),
+            translations: Joi.object().required().description('The keys to update')
+          })).min(1).required()
+          .description('The locales to edit'),
         }
       },
       plugins: {
