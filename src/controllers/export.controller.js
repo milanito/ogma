@@ -4,7 +4,7 @@ import {
 } from 'boom';
 import {
   merge, get, isNull, findIndex, isEqual, nth, identity,
-  reduce, isEmpty, map, uniq, union
+  reduce, isEmpty, map, uniq, union, keys
 } from 'lodash';
 
 import Client from '../database/models/client.model';
@@ -25,6 +25,15 @@ import { projectsListQueryWithClient, projectsListQuery } from '../helpers';
  */
 const _exportLocale = ({ code, keys }, type, pKeys) =>
   get(EXPORTERS, type, identity)(keys, pKeys, code);
+
+/**
+ * This function exports the accepted export type
+ * @param { Object } request the Hapi request object
+ * @param { Function } reply the Hapi reply object
+ * @return { Promise } a promise that resolves
+ */
+export const listExporters = (request, reply) =>
+  reply(keys(EXPORTERS));
 
 /**
  * This function exports a project's locale, using the

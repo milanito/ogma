@@ -4,7 +4,7 @@ import { keys, map, replace, forEach } from 'lodash';
 
 import exporters from '../exporter';
 import {
-  exporterProject, exporterProjects, exporterClientProjects
+  exporterProject, exporterProjects, exporterClientProjects, listExporters
 } from '../controllers/export.controller';
 
 /**
@@ -18,6 +18,44 @@ import {
  */
 const exportRoutes = (server, options, next) => {
   forEach([{
+    method: 'GET',
+    path: '/types',
+    handler: listExporters,
+    config: {
+      auth: 'jwt',
+      description: 'This route is used to list the allowed types for export',
+      plugins: {
+        rbac: {
+          target: [{
+            'credentials:role': 'admin'
+          }, {
+            'credentials:role': 'user',
+          }, {
+            'credentials:role': 'client',
+          }],
+          apply: 'permit-overrides',
+          policies:[{
+            target: { 'credentials:role': 'admin' },
+            apply: 'deny-overrides',
+            rules: [{ effect: 'permit' }]
+          }, {
+            target: { 'credentials:role': 'user' },
+            apply: 'deny-overrides',
+            rules: [{ effect: 'permit' }]
+          }, {
+            target: { 'credentials:role': 'client' },
+            apply: 'deny-overrides',
+            rules: [{ effect: 'permit' }]
+          }]
+        }
+      },
+      response: {
+        status: {
+          200: Joi.array(),
+        }
+      }
+    }
+  }, {
     method: 'GET',
     path: '/project/{id}/locale/{locale}/type/{type}',
     handler: exporterProject,
