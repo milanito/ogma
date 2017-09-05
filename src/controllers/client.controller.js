@@ -50,6 +50,7 @@ export const detailClient = (request, reply) =>
   Client
   .findOne(merge(clientsListQuery(get(request, 'auth.credentials', {})),
     { _id: new mongoose.Types.ObjectId(get(request, 'params.id', '')) }))
+  .populate('projects')
   .exec()
   .then((client) => {
     if (isNull(client)) {
@@ -58,7 +59,8 @@ export const detailClient = (request, reply) =>
     return reply(assign({
       id: get(client, '_id', ''),
       name: get(client, 'name', ''),
-      projects: get(client, 'projects', []),
+      projects: map(get(client, 'projects', []),
+        project => project.small),
       token: get(client, 'token', '')
     }));
   })

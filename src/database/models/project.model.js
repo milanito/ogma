@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { pick, isEqual, get } from 'lodash';
+import { pick, isEqual, get, map, merge } from 'lodash';
 
 /**
  * The project schema consists of :
@@ -55,7 +55,9 @@ projectSchema.pre('save', function preSave(next) {
 });
 
 projectSchema.virtual('small').get(function getProfile() {
-  return pick(this, ['_id', 'name']);
+  return merge(pick(this, ['_id', 'name', 'keys']), {
+    locales: map(get(this, 'locales', []), locale => pick(locale, ['code']))
+  });
 });
 
 export default mongoose.model('Project', projectSchema);
