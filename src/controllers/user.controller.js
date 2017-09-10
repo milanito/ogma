@@ -41,6 +41,24 @@ export const createUser = (request, reply) =>
  * @param { Function } reply the Hapi reply object
  * @return { Promise } a promise that resolves
  */
+export const detailMe = (request, reply) =>
+  User
+  .findById(get(request, 'auth.credentials._id', ''))
+  .exec()
+  .then((user) => {
+    if (isNull(user)) {
+      return reply(notFound(new Error('User not found')));
+    }
+    return reply(user.profile);
+  })
+  .catch(err => reply(badImplementation(err)));
+
+/**
+ * This function serves details about a user
+ * @param { Object } request the Hapi request object
+ * @param { Function } reply the Hapi reply object
+ * @return { Promise } a promise that resolves
+ */
 export const detailUser = (request, reply) =>
   User
   .findById(get(request, 'params.id', ''))

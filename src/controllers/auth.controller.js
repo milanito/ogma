@@ -8,6 +8,7 @@ import {
 
 import Client from '../database/models/client.model';
 import User from '../database/models/user.model';
+import Errors from '../config/errors';
 import { api } from '../config';
 
 /**
@@ -25,13 +26,13 @@ const _authenticateUser = (request, reply) =>
   .exec()
   .then((user) => {
     if (isNull(user)) {
-      return reply(notFound(new Error('User not found')));
+      return reply(notFound(new Error(Errors.userNotFound)));
     }
     return user
     .comparePassword(get(request, 'payload.password', ''))
     .then((res) => {
       if (!res) {
-        return reply(forbidden(new Error('Password is wrong')));
+        return reply(forbidden(new Error(Errors.wrongPassword)));
       }
       return reply({
         token: jwt.sign(user.profile, get(api, 'secret', ''))
@@ -54,13 +55,13 @@ const _authenticateClient = (request, reply) =>
   .exec()
   .then((client) => {
     if (isNull(client)) {
-      return reply(notFound(new Error('Client not found')));
+      return reply(notFound(new Error(Errors.clientNotFound)));
     }
     return client
     .compareToken(get(request, 'payload.token', ''))
     .then((res) => {
       if (!res) {
-        return reply(forbidden(new Error('Token is wrong')));
+        return reply(forbidden(new Error(Errors.wrongToken)));
       }
       return reply({
         token: jwt.sign(merge(pick(client, ['_id']), { role: 'client' }),
@@ -88,4 +89,4 @@ const AUTHENTICATORS = {
 export const authenticate = (request, reply) =>
   get(AUTHENTICATORS,
     get(request, 'payload.grant', ''),
-    () => reply(forbidden('Grant not authorized')))(request, reply);
+    () => reply(forbidden(new Error(Errors.grantNotAuthorized))))(request, reply);

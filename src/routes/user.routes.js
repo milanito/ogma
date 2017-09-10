@@ -2,7 +2,8 @@ import Joi from 'joi';
 import { forEach } from 'lodash';
 
 import {
-  createUser, listUsers, detailUser, updateUser, deleteUser
+  createUser, listUsers, detailMe, detailUser,
+  updateUser, deleteUser
 } from '../controllers/user.controller';
 
 /**
@@ -51,6 +52,37 @@ const userRoutes = (server, options, next) => {
         }
       }
     }
+  }, {
+    method: 'GET',
+    path: '/me',
+    handler: detailMe,
+    config: {
+      auth: 'jwt',
+      plugins: {
+        rbac: {
+          target: [{
+            'credentials:role': 'admin'
+          }, {
+            'credentials:role': 'user',
+          }],
+          apply: 'permit-overrides',
+          policies: [{
+            target: { 'credentials:role': 'admin' },
+            apply: 'deny-overrides',
+            rules: [{ effect: 'permit' }]
+          }, {
+            target: { 'credentials:role': 'user' },
+            apply: 'permit-overrides',
+            rules:[{
+              target: { 'credentials:_id': { field: 'params:id' } },
+              effect: 'permit'
+            }, {
+              effect: 'deny'
+            }]
+          }]
+        }
+      }
+    },
   }, {
     method: 'GET',
     path: '/{id}',
