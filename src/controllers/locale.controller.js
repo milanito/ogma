@@ -158,7 +158,7 @@ export const deleteLocale = (request, reply) =>
       return reply(notFound(new Error('Project not found')));
     }
     const idx = findIndex(get(project, 'locales', []), locale =>
-      isEqual(get(locale, 'code', ''), get(request, 'payload.locale', '')));
+      isEqual(get(locale, 'code', ''), get(request, 'params.locale', '')));
 
     if (isEqual(idx, -1)) {
       return reply(notFound(new Error('Locale is not in project')));

@@ -180,45 +180,33 @@ describe('# Project Locale Tests', () => {
     describe('## Success cases', () => {
       it('should return OK for a right locale', () =>
         request(HOST)
-        .delete(`/api/projects/${get(project, '_id', '')}/locales`)
+        .delete(`/api/projects/${get(project, '_id', '')}/locales/${locale}`)
         .set('Authorization', `Bearer ${tokenAdmin}`)
-        .send({ locale })
         .expect(ACCEPTED));
     });
 
     describe('## Error cases', () => {
       it('should fail without a token', () =>
         request(HOST)
-        .delete(`/api/projects/${get(project, '_id', '')}/locales`)
-        .send({ locale })
+        .delete(`/api/projects/${get(project, '_id', '')}/locales/${locale}`)
         .expect(UNAUTHORIZED));
-
-      it('should fail without a locale', () =>
-        request(HOST)
-        .delete(`/api/projects/${get(project, '_id', '')}/locales`)
-        .set('Authorization', `Bearer ${tokenAdmin}`)
-        .send({ })
-        .expect(BAD_REQUEST));
 
       it('should fail for a wrong locale', () =>
         request(HOST)
-        .delete(`/api/projects/${get(project, '_id', '')}/clients`)
+        .delete(`/api/projects/${get(project, '_id', '')}/locales/toto`)
         .set('Authorization', `Bearer ${tokenAdmin}`)
-        .send({ locale: 'toto' })
         .expect(BAD_REQUEST));
 
       it('should fail for an unexisting project', () =>
         request(HOST)
-        .delete(`/api/projects/${new mongoose.Types.ObjectId()}/locales`)
+        .delete(`/api/projects/${new mongoose.Types.ObjectId()}/locales/${locale}`)
         .set('Authorization', `Bearer ${tokenAdmin}`)
-        .send({ locale })
         .expect(NOT_FOUND));
 
       it('should fail for a locale not registered', () =>
         request(HOST)
-        .delete(`/api/projects/${get(project, '_id', '')}/locales`)
+        .delete(`/api/projects/${get(project, '_id', '')}/locales/${locale}`)
         .set('Authorization', `Bearer ${tokenAdmin}`)
-        .send({ locale })
         .expect(NOT_FOUND));
     });
   });

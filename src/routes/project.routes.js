@@ -361,7 +361,7 @@ const projectRoutes = (server, options, next) => {
     }
   }, {
     method: 'DELETE',
-    path: '/{id}/users',
+    path: '/{id}/users/{user}',
     handler: deleteUser,
     config: {
       auth: 'jwt',
@@ -520,16 +520,14 @@ const projectRoutes = (server, options, next) => {
     }
   }, {
     method: 'DELETE',
-    path: '/{id}/locales',
+    path: '/{id}/locales/{locale}',
     handler: deleteLocale,
     config: {
       auth: 'jwt',
       validate: {
         params: {
           id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i)
-          .description('The project ID')
-        },
-        payload: {
+          .description('The project ID'),
           locale: Joi.string()
           .only(map(countryLanguage.getLocales(),
             locale => replace(locale, /-/g, '_'))).required()
