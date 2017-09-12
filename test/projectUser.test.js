@@ -208,45 +208,33 @@ describe('# Project User Tests', () => {
     describe('## Success cases', () => {
       it('should succeed for a register user', () =>
         request(HOST)
-        .delete(`/api/projects/${get(project, '_id', '')}/users`)
+        .delete(`/api/projects/${get(project, '_id', '')}/users/${get(normalUser, '_id', '')}`)
         .set('Authorization', `Bearer ${tokenAdmin}`)
-        .send({ user: get(normalUser, '_id', '') })
         .expect(ACCEPTED));
     });
 
     describe('## Error cases', () => {
       it('should fail without a token', () =>
         request(HOST)
-        .delete(`/api/projects/${get(project, '_id', '')}/users`)
-        .send({ user: get(normalUser, '_id', ''), role: 'normal' })
+        .delete(`/api/projects/${get(project, '_id', '')}/users/${get(normalUser, '_id', '')}`)
         .expect(UNAUTHORIZED));
-
-      it('should fail without a user', () =>
-        request(HOST)
-        .delete(`/api/projects/${get(project, '_id', '')}/users`)
-        .set('Authorization', `Bearer ${tokenAdmin}`)
-        .send({ })
-        .expect(BAD_REQUEST));
 
       it('should fail for a wrong user', () =>
         request(HOST)
-        .delete(`/api/projects/${get(project, '_id', '')}/users`)
+        .delete(`/api/projects/${get(project, '_id', '')}/users/toto`)
         .set('Authorization', `Bearer ${tokenAdmin}`)
-        .send({ user: 'toto' })
         .expect(BAD_REQUEST));
 
       it('should fail for an unexisting project', () =>
         request(HOST)
-        .delete(`/api/projects/${new mongoose.Types.ObjectId()}/users`)
+        .delete(`/api/projects/${new mongoose.Types.ObjectId()}/users/${get(normalUser, '_id', '')}`)
         .set('Authorization', `Bearer ${tokenAdmin}`)
-        .send({ user: get(normalUser, '_id', '') })
         .expect(NOT_FOUND));
 
       it('should fail for a user not following', () =>
         request(HOST)
-        .delete(`/api/projects/${get(project, '_id', '')}/users`)
+        .delete(`/api/projects/${get(project, '_id', '')}/users/${get(normalUser, '_id', '')}`)
         .set('Authorization', `Bearer ${tokenAdmin}`)
-        .send({ user: get(normalUser, '_id', '') })
         .expect(NOT_FOUND));
     });
   });

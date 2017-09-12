@@ -171,52 +171,39 @@ describe('# Project Client Tests', () => {
     describe('## Success cases', () => {
       it('should fail for a client not following', () =>
         request(HOST)
-        .delete(`/api/projects/${get(project, '_id', '')}/clients`)
+        .delete(`/api/projects/${get(project, '_id', '')}/clients/${get(client, '_id' ,'')}`)
         .set('Authorization', `Bearer ${tokenAdmin}`)
-        .send({ client: get(client, '_id' ,'') })
         .expect(ACCEPTED));
     });
 
     describe('## Error cases', () => {
       it('should fail without a token', () =>
         request(HOST)
-        .delete(`/api/projects/${get(project, '_id', '')}/clients`)
-        .send({ client: get(client, '_id' ,'') })
+        .delete(`/api/projects/${get(project, '_id', '')}/clients/${get(client, '_id' ,'')}`)
         .expect(UNAUTHORIZED));
-
-      it('should fail without a client', () =>
-        request(HOST)
-        .delete(`/api/projects/${get(project, '_id', '')}/clients`)
-        .set('Authorization', `Bearer ${tokenAdmin}`)
-        .send({ })
-        .expect(BAD_REQUEST));
 
       it('should fail for a wrong client', () =>
         request(HOST)
-        .delete(`/api/projects/${get(project, '_id', '')}/clients`)
+        .delete(`/api/projects/${get(project, '_id', '')}/clients/toto`)
         .set('Authorization', `Bearer ${tokenAdmin}`)
-        .send({ client: 'toto' })
         .expect(BAD_REQUEST));
 
       it('should fail for an unexisting project', () =>
         request(HOST)
-        .delete(`/api/projects/${new mongoose.Types.ObjectId()}/clients`)
+        .delete(`/api/projects/${new mongoose.Types.ObjectId()}/clients/${get(client, '_id' ,'')}`)
         .set('Authorization', `Bearer ${tokenAdmin}`)
-        .send({ client: get(client, '_id' ,'') })
         .expect(NOT_FOUND));
 
       it('should fail for an unexisting client', () =>
         request(HOST)
-        .delete(`/api/projects/${get(project, '_id', '')}/clients`)
+        .delete(`/api/projects/${get(project, '_id', '')}/clients/${new mongoose.Types.ObjectId()}`)
         .set('Authorization', `Bearer ${tokenAdmin}`)
-        .send({ client: new mongoose.Types.ObjectId() })
         .expect(NOT_FOUND));
 
       it('should fail for a client not following', () =>
         request(HOST)
-        .delete(`/api/projects/${get(project, '_id', '')}/clients`)
+        .delete(`/api/projects/${get(project, '_id', '')}/clients/${get(client, '_id' ,'')}`)
         .set('Authorization', `Bearer ${tokenAdmin}`)
-        .send({ client: get(client, '_id' ,'') })
         .expect(NOT_FOUND));
     });
   });

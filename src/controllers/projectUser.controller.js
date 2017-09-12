@@ -113,7 +113,7 @@ export const deleteUser = (request, reply) =>
       return reply(notFound(new Error('Project not found')));
     }
     const idx = findIndex(project.users, usr =>
-      isEqual(get(usr, 'user', '').toString(), get(request, 'payload.user', '')));
+      isEqual(get(usr, 'user', '').toString(), get(request, 'params.user', '')));
 
     if (isEqual(idx, -1)) {
       return reply(notFound(new Error('User is not in project')));

@@ -104,7 +104,7 @@ export const deleteClient = (request, reply) =>
       return reply(notFound(new Error('Project not found')));
     }
     return Client
-    .findOne(clientQuery(get(request, 'payload.client', ''), get(request, 'auth.credentials', {})))
+    .findOne(clientQuery(get(request, 'params.client', ''), get(request, 'auth.credentials', {})))
     .exec()
     .then((client) => {
       if (isNull(client)) {

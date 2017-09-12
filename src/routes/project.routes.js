@@ -367,9 +367,8 @@ const projectRoutes = (server, options, next) => {
       auth: 'jwt',
       validate: {
         params: {
-          id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i).description('The project ID')
-        },
-        payload: {
+          id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i)
+            .description('The project ID'),
           user: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i).required()
           .description('The user ID'),
         }
@@ -603,16 +602,14 @@ const projectRoutes = (server, options, next) => {
     }
   }, {
     method: 'DELETE',
-    path: '/{id}/clients',
+    path: '/{id}/clients/{client}',
     handler: deleteClient,
     config: {
       auth: 'jwt',
       validate: {
         params: {
           id: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i)
-          .description('The project ID')
-        },
-        payload: {
+          .description('The project ID'),
           client: Joi.string().regex(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i)
           .description('The client ID').required()
         }
