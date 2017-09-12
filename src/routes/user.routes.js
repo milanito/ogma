@@ -72,13 +72,8 @@ const userRoutes = (server, options, next) => {
             rules: [{ effect: 'permit' }]
           }, {
             target: { 'credentials:role': 'user' },
-            apply: 'permit-overrides',
-            rules:[{
-              target: { 'credentials:_id': { field: 'params:id' } },
-              effect: 'permit'
-            }, {
-              effect: 'deny'
-            }]
+            apply: 'deny-overrides',
+            rules: [{ effect: 'permit' }]
           }]
         }
       }

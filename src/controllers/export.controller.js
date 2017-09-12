@@ -137,7 +137,7 @@ export const exporterClientProjects = (request, reply) =>
         }
         const ind = findIndex(projects, project => isNull(project));
         if (!isEqual(ind, -1)) {
-          return reply(notFound(new Error(`Project #${nth(get(request, 'payload.projects', []), ind)} does not exists`)));
+          return reply(notFound(new Error(`Project #${ind} does not exists`)));
         }
 
         const idxs = map(projects, (project) =>

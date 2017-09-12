@@ -36,7 +36,7 @@ export const createUser = (request, reply) =>
   .catch(err => reply(conflict(err)));
 
 /**
- * This function serves details about a user
+ * This function serves details about the logged user
  * @param { Object } request the Hapi request object
  * @param { Function } reply the Hapi reply object
  * @return { Promise } a promise that resolves

@@ -55,7 +55,7 @@ projectSchema.pre('save', function preSave(next) {
 });
 
 projectSchema.virtual('small').get(function getProfile() {
-  return merge(pick(this, ['_id', 'name', 'keys']), {
+  return merge(pick(this, ['_id', 'name', 'keys', 'users']), {
     locales: map(get(this, 'locales', []), locale => pick(locale, ['code']))
   });
 });
