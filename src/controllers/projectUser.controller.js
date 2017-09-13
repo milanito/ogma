@@ -128,3 +128,31 @@ export const deleteUser = (request, reply) =>
   })
   .catch(err => reply(badImplementation(err)));
 
+/**
+ * This function gets a user role for a project
+ * @param { Object } request the Hapi request object
+ * @param { Function } reply the Hapi reply object
+ * @return { Promise } a promise that resolves
+ */
+export const roleProject = (request, reply) =>
+  Project
+  .findOne(merge({
+    _id: get(request, 'params.id', '')
+  }, projectsListQuery(get(request, 'auth.credentials', {}), true)))
+  .exec()
+  .then(project => {
+    if (isNull(project)) {
+      return reply(notFound(new Error('Project not found')));
+    }
+    const idx = findIndex(get(project, 'users', []), usr =>
+      isEqual(get(usr, 'user', '').toString(), get(request, 'auth.credentials._id', '')));
+
+    if (isEqual(idx, -1)) {
+      if (!isEqual(get(request, 'auth.credentials.role'), 'admin')) {
+        return reply({ role: 'admin' });
+      }
+      return reply(notFound(new Error('User is not in project')));
+    }
+    return reply({ role: get(project.users[idx], 'role') });
+  })
+  .catch(err => reply(badImplementation(err)));

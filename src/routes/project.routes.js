@@ -12,7 +12,7 @@ import {
   getClients, addClient, deleteClient,
 } from '../controllers/projectClient.controller';
 import {
-  getUsers, addUser, updateUser, deleteUser,
+  getUsers, addUser, updateUser, deleteUser, roleProject
 } from '../controllers/projectUser.controller';
 import {
   getKeys, addKeys, updateKeys, deleteKeys,
@@ -106,6 +106,24 @@ const projectRoutes = (server, options, next) => {
           name: Joi.string().min(2).required()
         }
       },
+      plugins: {
+        rbac: {
+          target: [{
+            'credentials:role': 'admin'
+          }, {
+            'credentials:role': 'user',
+          }],
+          apply: 'deny-overrides',
+          rules: [{ effect: 'permit' }]
+        }
+      }
+    }
+  }, {
+    method: 'GET',
+    path: '/{id}/role',
+    handler: roleProject,
+    config: {
+      auth: 'jwt',
       plugins: {
         rbac: {
           target: [{
