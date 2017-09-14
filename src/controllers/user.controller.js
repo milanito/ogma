@@ -86,7 +86,7 @@ export const updateUser = (request, reply) =>
       return reply(notFound(new Error('User not found')));
     }
     return merge(clone(user),
-      pick(get(request, 'payload', {}), ['email', 'password']))
+      pick(get(request, 'payload', {}), ['email', 'password', 'role']))
       .save()
       .then(user => reply(user.profile));
   })

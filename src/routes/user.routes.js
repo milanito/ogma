@@ -126,7 +126,8 @@ const userRoutes = (server, options, next) => {
         },
         payload: {
           email: Joi.string().email().optional().description('New user email'),
-          password: Joi.string().optional().description('New user password')
+          password: Joi.string().optional().description('New user password'),
+          role: Joi.string().valid(['user', 'admin']),
         }
       },
       plugins: {
