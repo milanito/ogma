@@ -6,7 +6,7 @@ import {
   conflict, notFound, badImplementation
 } from 'boom';
 import {
-  get, set, has,
+  get, set, has, size,
   merge, isNull, map, assign
 } from 'lodash';
 
@@ -23,7 +23,7 @@ export const listClients = (request, reply) =>
   Client.find(clientsListQuery(get(request, 'auth.credentials', {})))
   .exec()
   .then(clients => reply(map(clients,
-    ({ _id, token, name }) => assign({ id: _id, token, name }))))
+    ({ _id, token, name, projects }) => assign({ id: _id, token, name, projects: size(projects) }))))
   .catch(err => reply(badImplementation(err)));
 
 /**

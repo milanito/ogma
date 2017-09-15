@@ -112,6 +112,7 @@ export const deleteUser = (request, reply) =>
     if (isNull(project)) {
       return reply(notFound(new Error('Project not found')));
     }
+
     const idx = findIndex(project.users, usr =>
       isEqual(get(usr, 'user', '').toString(), get(request, 'params.user', '')));
 
