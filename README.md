@@ -8,8 +8,6 @@ Ogma is an API for translation
 
 ## Documentation
 
-API documentation is available [here](http://51.255.49.32:3000/docs?)
-
 Technical documentation is available [here](https://s3-eu-west-1.amazonaws.com/ogma-api/docs/index.html)
 
 ## Three commands install
